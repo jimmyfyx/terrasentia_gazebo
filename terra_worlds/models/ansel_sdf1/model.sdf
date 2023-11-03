@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="plot_1_plot">
+    <static>true</static>
+     
+    <include>
+      <uri>model://tobacco_variant_6</uri>
+      <name>plant_1_0</name>
+      <pose>2.1402490238592 2.814840813529279 0 0.0 0.0 303.6918185145148</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_1</uri>
+      <name>plant_1_1</name>
+      <pose>12.932979659329952 6.6669159762756065 0 0.0 0.0 241.27317192648778</pose>
+    </include>
+     
+    <include>
+      <uri>model://sorghum_variant_3</uri>
+      <name>plant_1_2</name>
+      <pose>15.376608871270816 1.0520305763537496 0 0.0 0.0 131.97901857574047</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_17</uri>
+      <name>plant_1_3</name>
+      <pose>11.020784987602735 3.715336591324597 0 0.0 0.0 304.0123943833871</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_15</uri>
+      <name>plant_1_4</name>
+      <pose>9.910163917452232 7.8019620998641015 0 0.0 0.0 306.72558607722084</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_19</uri>
+      <name>plant_1_5</name>
+      <pose>10.343433916618212 9.140746316777824 0 0.0 0.0 211.364618593313</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_15</uri>
+      <name>plant_1_6</name>
+      <pose>17.080348827257573 3.7356125581194806 0 0.0 0.0 179.57410507133469</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_8</uri>
+      <name>plant_1_7</name>
+      <pose>10.862515299589266 1.4973073010126705 0 0.0 0.0 143.47890241255462</pose>
+    </include>
+     
+    <include>
+      <uri>model://tobacco_variant_8</uri>
+      <name>plant_1_8</name>
+      <pose>18.388084614757684 6.492906283465053 0 0.0 0.0 63.90236967730829</pose>
+    </include>
+     
+    <include>
+      <uri>model://sorghum_variant_1</uri>
+      <name>plant_1_9</name>
+      <pose>7.107684894387297 2.320228591795648 0 0.0 0.0 8.936327447486114</pose>
+    </include>
+     
+    <include>
+      <uri>model://sorghum_variant_7</uri>
+      <name>plant_1_10</name>
+      <pose>18.58547894082852 4.7579696184402795 0 0.0 0.0 110.71262607148302</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_8</uri>
+      <name>plant_1_11</name>
+      <pose>12.170305235375864 0.5694873347836485 0 0.0 0.0 100.08795837629297</pose>
+    </include>
+     
+  </model>
+</sdf>

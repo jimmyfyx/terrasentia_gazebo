@@ -1,0 +1,889 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="env_6_plot">
+    <static>true</static>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_0</name>
+      <pose>0.003853489037556099 -0.003233461230159017 0 0.0 0.0 3.0543261909900767</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_1</name>
+      <pose>0.27004671697166904 -0.05561687882777433 0 0.0 0.0 3.01941960595019</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_2</name>
+      <pose>0.6371914356007755 -0.08013134740246405 0 0.0 0.0 1.4835298641951802</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_3</name>
+      <pose>0.9105134246121259 0.022041864337824436 0 0.0 0.0 0.3665191429188092</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_4</name>
+      <pose>1.2609952059733747 -0.014391243519762035 0 0.0 0.0 2.7576202181510405</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_5</name>
+      <pose>1.4947905483783988 -0.032440382522248304 0 0.0 0.0 5.98647933434055</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_7</name>
+      <pose>2.134435489182182 0.0005425730189435166 0 0.0 0.0 1.5184364492350666</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_8</name>
+      <pose>2.4410670833062422 0.009301224845115814 0 0.0 0.0 1.3264502315156905</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_9</name>
+      <pose>2.688228809683877 0.01576273517281768 0 0.0 0.0 1.0297442586766545</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_10</name>
+      <pose>3.0754667065811243 -0.0048431214414549634 0 0.0 0.0 1.117010721276371</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_11</name>
+      <pose>3.3537728844521504 0.05573651293485528 0 0.0 0.0 0.3490658503988659</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_12</name>
+      <pose>3.6576000000000004 -0.007845786221042806 0 0.0 0.0 5.1487212933832724</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_13</name>
+      <pose>3.9567567610671954 0.03563000835966868 0 0.0 0.0 1.5707963267948966</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_14</name>
+      <pose>4.258707536380695 -0.0043271263429416566 0 0.0 0.0 1.064650843716541</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_15</name>
+      <pose>4.557737043908293 0.0733765480411975 0 0.0 0.0 5.654866776461628</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_17</name>
+      <pose>0.03687752836206072 0.7787900392149225 0 0.0 0.0 3.944444109507185</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_18</name>
+      <pose>0.3149762565933272 0.7490873008441337 0 0.0 0.0 5.969026041820607</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_19</name>
+      <pose>0.5861770057249321 0.6660555011552385 0 0.0 0.0 3.717551306747922</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_20</name>
+      <pose>0.9153607835963471 0.7462601544437182 0 0.0 0.0 2.0943951023931953</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_21</name>
+      <pose>1.2349264248346576 0.7851675406812714 0 0.0 0.0 0.5061454830783556</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_22</name>
+      <pose>1.503171617028217 0.710931404699642 0 0.0 0.0 0.5934119456780721</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_23</name>
+      <pose>1.7418614168667201 0.7969032390970225 0 0.0 0.0 1.0821041362364843</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_24</name>
+      <pose>2.1228618714675154 0.7320262187847484 0 0.0 0.0 0.8377580409572782</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_25</name>
+      <pose>2.466804329480882 0.7502196050227548 0 0.0 0.0 0.5934119456780721</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_26</name>
+      <pose>2.7415767254858427 0.7290260771136581 0 0.0 0.0 1.8500490071139892</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_27</name>
+      <pose>2.981302974711183 0.7482395149085868 0 0.0 0.0 2.652900463031381</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_28</name>
+      <pose>3.348866443021727 0.7848355013296336 0 0.0 0.0 0.017453292519943295</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_29</name>
+      <pose>3.6688075572345675 0.7181728269718594 0 0.0 0.0 2.792526803190927</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_30</name>
+      <pose>3.9652365984525075 0.7660831050121092 0 0.0 0.0 3.8048177693476384</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_31</name>
+      <pose>4.243183418319073 0.7831925433385082 0 0.0 0.0 5.934119456780721</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_32</name>
+      <pose>4.589137509727589 0.7633311944386993 0 0.0 0.0 4.694935687864747</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_33</name>
+      <pose>4.858177105815161 0.7847134152915766 0 0.0 0.0 4.276056667386108</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_34</name>
+      <pose>0.01821284434193655 1.5281088807420895 0 0.0 0.0 4.084070449666731</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_35</name>
+      <pose>0.3309566984856285 1.5383151174543155 0 0.0 0.0 3.735004599267865</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_37</name>
+      <pose>0.943941391745604 1.5262792166563928 0 0.0 0.0 2.705260340591211</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_38</name>
+      <pose>1.2738880795265397 1.5103570160563409 0 0.0 0.0 5.899212871740834</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_40</name>
+      <pose>1.8340833953476112 1.5702681488929162 0 0.0 0.0 1.8325957145940461</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_41</name>
+      <pose>2.164955996933267 1.4936891945380997 0 0.0 0.0 5.759586531581287</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_42</name>
+      <pose>2.4954822827965715 1.4921591104503797 0 0.0 0.0 5.8817595792208905</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_43</name>
+      <pose>2.7028193434144328 1.5405749721976414 0 0.0 0.0 5.846852994181004</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_44</name>
+      <pose>3.045359039815251 1.5033256336333451 0 0.0 0.0 1.3264502315156905</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_45</name>
+      <pose>3.3497253574736088 1.4613323256880273 0 0.0 0.0 3.7873644768276953</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_46</name>
+      <pose>3.6335234805883387 1.4500767104280792 0 0.0 0.0 5.654866776461628</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_47</name>
+      <pose>3.9934212968102574 1.5659909638435359 0 0.0 0.0 5.794493116621174</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_48</name>
+      <pose>4.325671672316049 1.518979373163262 0 0.0 0.0 0.9948376736367679</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_49</name>
+      <pose>4.608613212206703 1.5277823784983515 0 0.0 0.0 0.5934119456780721</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_51</name>
+      <pose>-0.07567903545104916 2.334984037733613 0 0.0 0.0 4.223696789826278</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_52</name>
+      <pose>0.3964041400459596 2.257160522710174 0 0.0 0.0 4.153883619746504</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_53</name>
+      <pose>0.5885076699409367 2.2419484293035032 0 0.0 0.0 1.5184364492350666</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_54</name>
+      <pose>0.9965561292976158 2.288634957142214 0 0.0 0.0 1.8675022996339325</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_55</name>
+      <pose>1.2861065492636392 2.32180785207686 0 0.0 0.0 4.293509959906051</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_56</name>
+      <pose>1.529180946840418 2.28739915890318 0 0.0 0.0 2.652900463031381</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_57</name>
+      <pose>1.8775591354009216 2.2495319106623675 0 0.0 0.0 4.363323129985824</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_58</name>
+      <pose>2.1495797157952743 2.257178600738674 0 0.0 0.0 4.904375198104066</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_60</name>
+      <pose>2.826885923755884 2.2427406261873375 0 0.0 0.0 5.515240436302081</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_62</name>
+      <pose>3.3505926889774558 2.283398960907858 0 0.0 0.0 4.276056667386108</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_63</name>
+      <pose>3.743474452313858 2.2829988019544825 0 0.0 0.0 1.4835298641951802</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_64</name>
+      <pose>3.983855365450852 2.360072513957537 0 0.0 0.0 6.056292504420323</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_67</name>
+      <pose>4.841671982418705 2.3105363198091955 0 0.0 0.0 1.5533430342749532</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_68</name>
+      <pose>-0.024423497416551677 2.9690690131319633 0 0.0 0.0 2.8448866807507573</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_69</name>
+      <pose>0.3647090432664113 2.97346426679688 0 0.0 0.0 2.8623399732707004</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_70</name>
+      <pose>0.6004591681371839 3.1269692057576024 0 0.0 0.0 3.385938748868999</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_72</name>
+      <pose>1.2199155754848985 3.080995292073739 0 0.0 0.0 4.1887902047863905</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_73</name>
+      <pose>1.5676317024949602 3.071700287431866 0 0.0 0.0 5.497787143782138</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_74</name>
+      <pose>1.8527745754673393 2.970372777140094 0 0.0 0.0 4.136430327226561</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_75</name>
+      <pose>2.129147432822056 2.9976366531121315 0 0.0 0.0 5.201081170943102</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_76</name>
+      <pose>2.462141098529939 3.1286029859412308 0 0.0 0.0 3.2114058236695664</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_77</name>
+      <pose>2.7211992376085385 3.055984489525938 0 0.0 0.0 3.717551306747922</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_78</name>
+      <pose>3.0679998436520743 2.9784468104459325 0 0.0 0.0 3.9095375244672983</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_79</name>
+      <pose>3.402473276431494 2.9867319326304593 0 0.0 0.0 2.443460952792061</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_80</name>
+      <pose>3.6238975816430465 2.98606485619118 0 0.0 0.0 0.29670597283903605</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_81</name>
+      <pose>3.963987165129966 3.0448847919912754 0 0.0 0.0 4.991641660703783</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_82</name>
+      <pose>4.1940227250592175 3.010434461788774 0 0.0 0.0 1.9373154697137058</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_83</name>
+      <pose>4.635436793518664 3.0991557669723533 0 0.0 0.0 2.111848394913139</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_85</name>
+      <pose>-0.013578287210638997 3.798332795967028 0 0.0 0.0 6.073745796940266</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_86</name>
+      <pose>0.2828365038064264 3.787319369560295 0 0.0 0.0 2.3387411976724017</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_87</name>
+      <pose>0.6062630991845255 3.803976763534972 0 0.0 0.0 2.426007660272118</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_88</name>
+      <pose>0.8929260537780435 3.8930138799860807 0 0.0 0.0 3.7873644768276953</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_89</name>
+      <pose>1.254428087345646 3.8917723051142197 0 0.0 0.0 3.193952531149623</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_90</name>
+      <pose>1.5366052039550822 3.779827456865077 0 0.0 0.0 6.2482787221397</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_91</name>
+      <pose>1.7867033550631248 3.842096644936875 0 0.0 0.0 3.5255650890285457</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_92</name>
+      <pose>2.1437809333282685 3.7908330464565 0 0.0 0.0 2.792526803190927</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_93</name>
+      <pose>2.4129963072868255 3.7262223192892634 0 0.0 0.0 3.6826447217080354</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_94</name>
+      <pose>2.7955384805141907 3.7376254278162913 0 0.0 0.0 5.899212871740834</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_95</name>
+      <pose>3.0098480002466292 3.7101195211201143 0 0.0 0.0 5.899212871740834</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_96</name>
+      <pose>3.365314045863288 3.8024324841034693 0 0.0 0.0 2.91469985083053</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_97</name>
+      <pose>3.669475496913407 3.8 0 0.0 0.0 5.759586531581287</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_98</name>
+      <pose>3.964762141389693 3.794694543573588 0 0.0 0.0 3.263765701229396</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_99</name>
+      <pose>4.307643641332807 3.8171673072215904 0 0.0 0.0 4.4505895925855405</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_100</name>
+      <pose>4.598527523831909 3.790865841032474 0 0.0 0.0 3.839724354387525</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_101</name>
+      <pose>4.845481060722967 3.7788751087191694 0 0.0 0.0 0.5410520681182421</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_102</name>
+      <pose>0.061084300780339024 4.602771687872663 0 0.0 0.0 2.7576202181510405</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_103</name>
+      <pose>0.2723532519784614 4.554860939974258 0 0.0 0.0 4.729842272904633</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_104</name>
+      <pose>0.5988836684051592 4.5669592671089125 0 0.0 0.0 0.8901179185171081</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_105</name>
+      <pose>0.8959992001424479 4.546134002742211 0 0.0 0.0 3.1764992386296798</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_107</name>
+      <pose>1.5715491406340178 4.574537231168812 0 0.0 0.0 4.310963252425994</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_109</name>
+      <pose>2.118729787599011 4.593399043888389 0 0.0 0.0 1.3089969389957472</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_110</name>
+      <pose>2.4999436257518965 4.615414129527761 0 0.0 0.0 2.1642082724729685</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_111</name>
+      <pose>2.6735090401664054 4.603547744905158 0 0.0 0.0 3.2986722862692828</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_112</name>
+      <pose>3.030240620083032 4.5112065046946155 0 0.0 0.0 1.1344640137963142</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_114</name>
+      <pose>3.6931984123197195 4.517575464227326 0 0.0 0.0 4.694935687864747</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_115</name>
+      <pose>3.9040747776328266 4.5340319379251355 0 0.0 0.0 5.078908123303499</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_116</name>
+      <pose>4.258866588899229 4.565207293193733 0 0.0 0.0 5.794493116621174</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_117</name>
+      <pose>4.548335072004185 4.572057883074322 0 0.0 0.0 5.235987755982989</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_119</name>
+      <pose>6.6079368184726315 -0.07388903363442274 0 0.0 0.0 4.537856055185257</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_120</name>
+      <pose>7.3461996222676795 -0.09012628988219827 0 0.0 0.0 5.061454830783556</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_121</name>
+      <pose>8.17907500626487 -0.034885169132416974 0 0.0 0.0 0.13962634015954636</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_122</name>
+      <pose>6.62169201008924 0.33309383547539173 0 0.0 0.0 5.410520681182422</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_123</name>
+      <pose>7.358765897405993 0.2994629894479509 0 0.0 0.0 0.9075712110370514</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_125</name>
+      <pose>6.614535871950675 0.5937009593665846 0 0.0 0.0 3.2986722862692828</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_126</name>
+      <pose>7.367606618773767 0.5912747138556776 0 0.0 0.0 3.5255650890285457</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_127</name>
+      <pose>8.164731800833707 0.6263137995758162 0 0.0 0.0 5.969026041820607</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_128</name>
+      <pose>6.651934138345077 0.9053462352539463 0 0.0 0.0 0.6806784082777885</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_129</name>
+      <pose>7.325847881871605 0.9295659592852175 0 0.0 0.0 2.251474735072685</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_131</name>
+      <pose>6.619875822160372 1.2192 0 0.0 0.0 0.5585053606381855</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_132</name>
+      <pose>7.348354193399478 1.2225049246074309 0 0.0 0.0 1.2042771838760873</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_133</name>
+      <pose>8.070400972941192 1.1777879973874434 0 0.0 0.0 5.98647933434055</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_135</name>
+      <pose>7.361190523588542 1.4644229528447685 0 0.0 0.0 5.689773361501515</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_136</name>
+      <pose>8.145184501674672 1.5219159989919497 0 0.0 0.0 2.6878070480712677</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_137</name>
+      <pose>6.538874867344214 1.80328007052123 0 0.0 0.0 4.904375198104066</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_139</name>
+      <pose>8.108387565984529 1.847645973298375 0 0.0 0.0 4.4331363000655974</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_140</name>
+      <pose>6.614538968352445 2.173373395141883 0 0.0 0.0 0.6632251157578453</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_142</name>
+      <pose>8.140170323841225 2.138413284764718 0 0.0 0.0 2.5132741228718345</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_144</name>
+      <pose>7.383615492588105 2.428691551502346 0 0.0 0.0 1.6057029118347832</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_146</name>
+      <pose>6.606604057215911 2.719396269487819 0 0.0 0.0 4.694935687864747</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_147</name>
+      <pose>7.300164114577673 2.7778634362756405 0 0.0 0.0 1.4835298641951802</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_148</name>
+      <pose>8.110372891330838 2.746384876362563 0 0.0 0.0 5.934119456780721</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_149</name>
+      <pose>6.607847103380159 3.0507660324659978 0 0.0 0.0 0.8726646259971648</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_150</name>
+      <pose>7.365556863255905 3.047449661879102 0 0.0 0.0 2.356194490192345</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_151</name>
+      <pose>8.086737377795613 3.087991330305375 0 0.0 0.0 5.1661745859032155</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_152</name>
+      <pose>6.632119253204039 3.3241005215242465 0 0.0 0.0 3.7873644768276953</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_153</name>
+      <pose>7.368005793655377 3.3485603344024364 0 0.0 0.0 0.767944870877505</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_154</name>
+      <pose>8.17925254387072 3.3528000000000002 0 0.0 0.0 2.6878070480712677</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_155</name>
+      <pose>6.545972874286687 3.60222382040869 0 0.0 0.0 2.9845130209103035</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_156</name>
+      <pose>7.437473275265093 3.640950543602902 0 0.0 0.0 2.2165681500327987</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_157</name>
+      <pose>8.088765764615902 3.7438025037714957 0 0.0 0.0 5.672320068981571</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_158</name>
+      <pose>6.620550107797241 3.9509508379305736 0 0.0 0.0 5.323254218582705</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_159</name>
+      <pose>7.372027738678418 3.976077950322981 0 0.0 0.0 3.7873644768276953</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_160</name>
+      <pose>8.116159314104523 4.020469103491138 0 0.0 0.0 1.9896753472735358</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_161</name>
+      <pose>6.683707267463003 4.2896667048220385 0 0.0 0.0 4.066617157146788</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_163</name>
+      <pose>8.121753112783763 4.318731646834753 0 0.0 0.0 0.7853981633974483</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_164</name>
+      <pose>6.615671898326804 4.549878678196062 0 0.0 0.0 0.19198621771937624</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_165</name>
+      <pose>7.346132044532658 4.53426977072974 0 0.0 0.0 0.12217304763960307</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_166</name>
+      <pose>8.07060382699924 4.639613990048492 0 0.0 0.0 2.426007660272118</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_167</name>
+      <pose>6.612671377469105 4.8899962862392705 0 0.0 0.0 4.1887902047863905</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_168</name>
+      <pose>7.398395867763987 4.798964260537529 0 0.0 0.0 0.0</pose>
+    </include>
+     
+    <include>
+      <uri>model://corn_variant_6</uri>
+      <name>plant_0_169</name>
+      <pose>8.127038882784245 4.973180404773462 0 0.0 0.0 5.742133239061344</pose>
+    </include>
+     
+  </model>
+</sdf>
