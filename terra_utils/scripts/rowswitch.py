@@ -5,6 +5,8 @@ import sys
 import numpy as np
 import json
 
+from scipy.spatial.transform import Rotation as R
+
 from gazebo_msgs.msg import ModelState 
 from gazebo_msgs.srv import SetModelState
 from geometry_msgs.msg import TwistStamped, PoseStamped
@@ -35,8 +37,14 @@ class RowSwitch:
         self.cur_route = 0  # Track current route index
         self.num_routes = len(self.routes)  # Total number of routes 
         self.env_complete = False  # Flag to record all routes are completed
+
+        # Real-time robot pose
         self.robot_x = 0.0
         self.robot_y = 0.0
+        self.robot_quatx = 0.0
+        self.robot_quaty = 0.0
+        self.robot_quatz = 0.0
+        self.robot_quatw = 0.0
     
     @staticmethod
     def get_quaternion_from_euler(roll, pitch, yaw):
@@ -61,6 +69,16 @@ class RowSwitch:
     def odom_callback(self, msg):
         self.robot_x = msg.pose.pose.position.x
         self.robot_y = msg.pose.pose.position.y
+        self.robot_quatx = msg.pose.pose.orientation.x
+        self.robot_quaty = msg.pose.pose.orientation.y
+        self.robot_quatz = msg.pose.pose.orientation.z
+        self.robot_quatw = msg.pose.pose.orientation.w
+
+        # Transformation
+        robot_pos = np.array([self.robot_x, self.robot_y, 0.0])
+        robot_quat = np.array([self.robot_quatx, self.robot_quaty, self.robot_quatz, self.robot_quatw])
+        norm = np.linalg.norm(robot_quat)
+        robot_quat_norm = robot_quat / norm
 
         if not self.set_robot and not self.env_complete:
             route = self.routes[f"route_{self.cur_route}"]
@@ -103,9 +121,19 @@ class RowSwitch:
                 self.mpc_path_body_noi = []
                 self.mpc_path_body_ref = []
                 for i in range(len(self.mpc_path_world_noi)):
-                    self.mpc_path_body_noi.append([self.mpc_path_world_noi[i][0] - self.robot_x, self.mpc_path_world_noi[i][1] - self.robot_y])
+                    point = np.array([self.mpc_path_world_noi[i][0], self.mpc_path_world_noi[i][1], 0.0])
+                    translation = point - robot_pos
+                    rotation = R.from_quat(robot_quat_norm)
+                    rotation_inv = rotation.inv()
+                    point_body = rotation_inv.apply(translation)
+                    self.mpc_path_body_noi.append([point_body[0], point_body[1]])
                 for i in range(len(self.mpc_path_world_ref)):
-                    self.mpc_path_body_ref.append([self.mpc_path_world_ref[i][0] - self.robot_x, self.mpc_path_world_ref[i][1] - self.robot_y])
+                    point = np.array([self.mpc_path_world_ref[i][0], self.mpc_path_world_ref[i][1], 0.0])
+                    translation = point - robot_pos
+                    rotation = R.from_quat(robot_quat_norm)
+                    rotation_inv = rotation.inv()
+                    point_body = rotation_inv.apply(translation)
+                    self.mpc_path_body_ref.append([point_body[0], point_body[1]])
                 
                 # Publish path
                 mpc_path_noi = Path()
