@@ -92,7 +92,7 @@ class RowSwitch:
             # Whether the robot reach destination of current route and complete all routes
             if abs(self.robot_x - noi_target_x) < 0.05 and abs(self.robot_y - noi_target_y) < 0.05:
                 self.cur_route += 1
-                if self.cur_route >= self.num_routes:
+                if self.cur_route > self.num_routes:
                     self.env_complete = True  # Complete all routes
                 else:
                     self.set_robot = True  # Complete current route
