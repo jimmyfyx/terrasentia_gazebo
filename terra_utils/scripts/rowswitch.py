@@ -24,6 +24,7 @@ class RowSwitch:
         # self.pub_path_noi = rospy.Publisher("/terrasentia/path2", Path, queue_size=10)
         # self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
         self.pub_path_ref = rospy.Publisher("/terrasentia/path2", Path, queue_size=10)
+        self.pub_route_id = rospy.Publisher("/terrasentia/route_id", Int8, queue_size=10)
         self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
         self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
 
@@ -100,6 +101,9 @@ class RowSwitch:
             # print('x_diff', self.robot_x - noi_target_x)
             # print('y_diff', self.robot_y - noi_target_y)
             # print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
+            
+            # Publish current route id
+            self.pub_route_id.publish(self.cur_route)
 
             # Whether the robot complete all routes or current route
             if abs(self.robot_x - ref_target_x) < 0.1 and abs(self.robot_y - ref_target_y) < 0.1:
@@ -117,13 +121,18 @@ class RowSwitch:
                                     self.mpc_path_world_noi.append(noi_route[i])
                             else:
                                 self.mpc_path_world_noi.append(noi_route[i])
-                    for i in range(len(ref_route) - 2):
+                    for i in range(len(ref_route)):
                         if ref_route[i][1] < self.robot_y:
                             if self.robot_y < ref_target_y + (init_y - ref_target_y) * (2 / 5):
                                 if ref_route[i][0] < self.robot_x:
                                     self.mpc_path_world_ref.append(ref_route[i])
                             else:
                                 self.mpc_path_world_ref.append(ref_route[i])
+                        elif ref_route[i][1] >= self.robot_y and abs(ref_route[i][1] - self.robot_y) <= abs(init_y - ref_target_y) * (1 / 5):
+                            if self.robot_y < ref_target_y + (init_y - ref_target_y) * (2 / 5):
+                                if ref_route[i][0] < self.robot_x:
+                                    self.mpc_path_world_ref.append(ref_route[i])
+                        
                 else:  # Robot turning left
                     for i in range(len(noi_route)):
                         if noi_route[i][1] > self.robot_y:
@@ -132,14 +141,20 @@ class RowSwitch:
                                     self.mpc_path_world_noi.append(noi_route[i])
                             else:
                                 self.mpc_path_world_noi.append(noi_route[i])
-                    for i in range(len(ref_route) - 2):
+                    for i in range(len(ref_route)):
                         if ref_route[i][1] > self.robot_y:
                             if self.robot_y > ref_target_y - (ref_target_y - init_y) * (2 / 5):
                                 if ref_route[i][0] < self.robot_x:
                                     self.mpc_path_world_ref.append(ref_route[i])
                             else:
                                 self.mpc_path_world_ref.append(ref_route[i])    
+                        elif ref_route[i][1] <= self.robot_y and abs(ref_route[i][1] - self.robot_y) <= abs(init_y - ref_target_y) * (1 / 5):
+                            if self.robot_y > ref_target_y + (ref_target_y - init_y) * (2 / 5):
+                                if ref_route[i][0] < self.robot_x:
+                                    self.mpc_path_world_ref.append(ref_route[i])
                 
+                # print(self.mpc_path_world_ref)
+
                 # Transform MPC path to body frame
                 self.mpc_path_body_noi = []
                 self.mpc_path_body_ref = []
@@ -190,7 +205,7 @@ class RowSwitch:
             final_x = ref_route[-1][0]
             final_y = ref_route[-1][1]
 
-            print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
+            # print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
 
             if abs(self.robot_x - final_x) < 0.1 and abs(self.robot_y - final_y) < 0.2:
                 self.cur_route += 1
@@ -204,7 +219,7 @@ class RowSwitch:
                     self.set_robot_state()
             else:
                 self.mpc_path_world_ref = []
-                for i in range(len(ref_route) - 2, len(ref_route)):
+                for i in range(len(ref_route) - 3, len(ref_route)):  # -3 since we have three additional waypoints
                     if ref_route[i][0] < self.robot_x:
                         self.mpc_path_world_ref.append(ref_route[i])
 

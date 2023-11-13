@@ -568,11 +568,15 @@ class EnvCreator:
         noi_y.append(init_y)
         ref_x.append(init_x)
         ref_y.append(init_y)
-        for i in range(len(noi_waypoints)):
-            noi_x.append(noi_waypoints[i][0])
-            noi_y.append(noi_waypoints[i][1])
-            ref_x.append(ref_waypoints[i][0])
-            ref_y.append(ref_waypoints[i][1])
+        for i in range(len(ref_waypoints)):
+            if i < len(noi_waypoints):
+                noi_x.append(noi_waypoints[i][0])
+                noi_y.append(noi_waypoints[i][1])
+                ref_x.append(ref_waypoints[i][0])
+                ref_y.append(ref_waypoints[i][1])
+            else:
+                ref_x.append(ref_waypoints[i][0])
+                ref_y.append(ref_waypoints[i][1])
         
         plt.figure(0)
         plt.scatter(noi_x, noi_y, label='Noisy path')
@@ -713,9 +717,10 @@ class EnvCreator:
             noi_waypoints.append([noi_target_x_rot, noi_target_y_rot])
             ref_waypoints.append([ref_target_x, ref_target_y])
 
-            # Add two additional waypoints to the end of reference path
+            # Add three additional waypoints to the end of reference path
             ref_waypoints.append([ref_target_x - 0.4, ref_target_y])
             ref_waypoints.append([ref_target_x - 0.6, ref_target_y])
+            ref_waypoints.append([ref_target_x - 0.7, ref_target_y])
 
             # self.plot_waypoints(env_idx, i, init_x, init_y, noi_waypoints, ref_waypoints)  # Debug purpose
             route_dict["noi_waypoints"] = noi_waypoints
