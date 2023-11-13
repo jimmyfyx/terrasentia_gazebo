@@ -21,7 +21,10 @@ def mylogerr(msg=''):
 class RowSwitch:
     def __init__(self):
         self.pub_path_noi = rospy.Publisher("/terrasentia/mpc_path_noi", Path, queue_size=10)
-        self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
+        # self.pub_path_noi = rospy.Publisher("/terrasentia/path2", Path, queue_size=10)
+        # self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
+        self.pub_path_ref = rospy.Publisher("/terrasentia/path2", Path, queue_size=10)
+        self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
         self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
 
         # Read routes
@@ -35,6 +38,7 @@ class RowSwitch:
         self.mpc_path_body_ref = []
         self.set_robot = True  # Flag to reset robot initial position for the new route
         self.cur_route = 0  # Track current route index
+        self.final_stage = False  # Flag to indicate robot at the final stage of every route
         self.num_routes = len(self.routes)  # Total number of routes 
         self.env_complete = False  # Flag to record all routes are completed
 
@@ -74,48 +78,67 @@ class RowSwitch:
         self.robot_quatz = msg.pose.pose.orientation.z
         self.robot_quatw = msg.pose.pose.orientation.w
 
-        # Transformation
+        # Transformation matrix (world -> body)
         robot_pos = np.array([self.robot_x, self.robot_y, 0.0])
         robot_quat = np.array([self.robot_quatx, self.robot_quaty, self.robot_quatz, self.robot_quatw])
         norm = np.linalg.norm(robot_quat)
         robot_quat_norm = robot_quat / norm
 
-        if not self.set_robot and not self.env_complete:
+        if not self.set_robot and not self.env_complete and not self.final_stage:
             route = self.routes[f"route_{self.cur_route}"]
             noi_route = route["noi_waypoints"]
             ref_route = route["ref_waypoints"]
             init_lane = route["init_lane"]
             target_lane = route["target_lane"]
+            init_x = route["init_x"]
+            init_y = route["init_y"]
+            ref_target_x = route["ref_target_x"]
+            ref_target_y = route["ref_target_y"]
             noi_target_x = route["noi_target_x"]
             noi_target_y = route["noi_target_y"]
 
-            # Whether the robot reach destination of current route and complete all routes
-            if abs(self.robot_x - noi_target_x) < 0.05 and abs(self.robot_y - noi_target_y) < 0.05:
-                self.cur_route += 1
-                if self.cur_route > self.num_routes:
-                    self.env_complete = True  # Complete all routes
-                else:
-                    self.set_robot = True  # Complete current route
-                    self.set_robot_state()
+            # print('x_diff', self.robot_x - noi_target_x)
+            # print('y_diff', self.robot_y - noi_target_y)
+            # print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
+
+            # Whether the robot complete all routes or current route
+            if abs(self.robot_x - ref_target_x) < 0.1 and abs(self.robot_y - ref_target_y) < 0.1:
+                self.final_stage = True
             else:
                 # Prepare MPC path (noisy and reference)
                 # Detremine MPC path in world frame
                 self.mpc_path_world_noi = []
                 self.mpc_path_world_ref = []
-                if target_lane < init_lane:
+                if target_lane < init_lane:  # Robot turning right
                     for i in range(len(noi_route)):
                         if noi_route[i][1] < self.robot_y:
-                            self.mpc_path_world_noi.append(noi_route[i])
-                    for i in range(len(ref_route)):
+                            if self.robot_y < noi_target_y + (init_y - noi_target_y) * (2 / 5):
+                                if noi_route[i][0] < self.robot_x:
+                                    self.mpc_path_world_noi.append(noi_route[i])
+                            else:
+                                self.mpc_path_world_noi.append(noi_route[i])
+                    for i in range(len(ref_route) - 2):
                         if ref_route[i][1] < self.robot_y:
-                            self.mpc_path_world_ref.append(ref_route[i])
-                else:
+                            if self.robot_y < ref_target_y + (init_y - ref_target_y) * (2 / 5):
+                                if ref_route[i][0] < self.robot_x:
+                                    self.mpc_path_world_ref.append(ref_route[i])
+                            else:
+                                self.mpc_path_world_ref.append(ref_route[i])
+                else:  # Robot turning left
                     for i in range(len(noi_route)):
                         if noi_route[i][1] > self.robot_y:
-                            self.mpc_path_world_noi.append(noi_route[i])
-                    for i in range(len(ref_route)):
+                            if self.robot_y > noi_target_y - (noi_target_y - init_y) * (2 / 5):
+                                if noi_route[i][0] < self.robot_x:
+                                    self.mpc_path_world_noi.append(noi_route[i])
+                            else:
+                                self.mpc_path_world_noi.append(noi_route[i])
+                    for i in range(len(ref_route) - 2):
                         if ref_route[i][1] > self.robot_y:
-                            self.mpc_path_world_ref.append(ref_route[i])         
+                            if self.robot_y > ref_target_y - (ref_target_y - init_y) * (2 / 5):
+                                if ref_route[i][0] < self.robot_x:
+                                    self.mpc_path_world_ref.append(ref_route[i])
+                            else:
+                                self.mpc_path_world_ref.append(ref_route[i])    
                 
                 # Transform MPC path to body frame
                 self.mpc_path_body_noi = []
@@ -160,8 +183,65 @@ class RowSwitch:
                 mpc_path_ref.header.stamp = rospy.Time.now()
                 self.pub_path_noi.publish(mpc_path_noi)
                 self.pub_path_ref.publish(mpc_path_ref)
+        elif not self.set_robot and not self.env_complete and self.final_stage:
+            # The final stage of each route to adjust robot pose using additional waypoints
+            route = self.routes[f"route_{self.cur_route}"]
+            ref_route = route["ref_waypoints"]
+            final_x = ref_route[-1][0]
+            final_y = ref_route[-1][1]
+
+            print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
+
+            if abs(self.robot_x - final_x) < 0.1 and abs(self.robot_y - final_y) < 0.2:
+                self.cur_route += 1
+                if self.cur_route >= self.num_routes:
+                    self.env_complete = True  # Complete all routes
+                    self.set_robot = False
+                    self.final_stage = False
+                else:
+                    self.set_robot = True  # Complete current route
+                    self.final_stage = False
+                    self.set_robot_state()
+            else:
+                self.mpc_path_world_ref = []
+                for i in range(len(ref_route) - 2, len(ref_route)):
+                    if ref_route[i][0] < self.robot_x:
+                        self.mpc_path_world_ref.append(ref_route[i])
+
+                self.mpc_path_body_ref = []
+                for i in range(len(self.mpc_path_world_ref)):
+                    point = np.array([self.mpc_path_world_ref[i][0], self.mpc_path_world_ref[i][1], 0.0])
+                    translation = point - robot_pos
+                    rotation = R.from_quat(robot_quat_norm)
+                    rotation_inv = rotation.inv()
+                    point_body = rotation_inv.apply(translation)
+                    self.mpc_path_body_ref.append([point_body[0], point_body[1]])
+                
+                mpc_path_ref = Path()
+                mpc_path_ref.header.frame_id = "map"
+                for i in range(len(self.mpc_path_body_ref)):
+                    pose = PoseStamped()
+                    pose.header.frame_id = "map"
+                    pose.header.stamp = rospy.Time.now()
+                    pose.pose.position.x = self.mpc_path_body_ref[i][0]
+                    pose.pose.position.y = self.mpc_path_body_ref[i][1]
+                    mpc_path_ref.poses.append(pose)
+                
+                mpc_path_ref.header.stamp = rospy.Time.now()
+                self.pub_path_ref.publish(mpc_path_ref)
         elif self.set_robot and not self.env_complete:
             self.set_robot_state()
+        else:
+            # Stop the robot
+            twist_stamped = TwistStamped()
+            twist_stamped.twist.linear.x = 0.0
+            twist_stamped.twist.linear.y = 0.0
+            twist_stamped.twist.linear.z = 0.0
+            twist_stamped.twist.angular.x = 0.0
+            twist_stamped.twist.angular.y = 0.0
+            twist_stamped.twist.angular.z = 0.0
+
+            self.pub_twist.publish(twist_stamped)
 
     def set_robot_state(self):
         rospy.wait_for_service('/gazebo/set_model_state')
