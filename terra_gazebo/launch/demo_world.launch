@@ -26,9 +26,5 @@
      </include>
 
      <include file="$(find terra_gazebo)/launch/spawn_robot.launch" pass_all_args="true"/>
-
-     <group ns="terrasentia">
-          <rosparam command="load" file="$(find terra_mpc)/configs/mpc.yaml" />
-    </group>
-
+     
 </launch>

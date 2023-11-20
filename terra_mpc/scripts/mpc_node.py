@@ -10,6 +10,7 @@ from nav_msgs.msg import Odometry, Path
 from geometry_msgs.msg import TwistStamped, PoseArray, Pose
 from sensor_msgs.msg import Image
 from fpn_msgs.srv import ZZsetString, ZZsetStringResponse
+import yaml
 
 from mpc.mpc import MPC_CONTROLLER
 from utils.mpc_utils import euler_from_quaternion, quaternion_from_euler
@@ -25,7 +26,7 @@ class MPC_NODE:
     def __init__(self):
         self.params = {}
         self.params['verbose'] = True
-        self.params['frame_id'] = "base_link"
+        self.params['frame_id'] = "base_footprint"
 
 
         # Initialize reference path
@@ -39,8 +40,9 @@ class MPC_NODE:
         self.mpc = MPC_CONTROLLER(self.params)
 
         # And after setting everything we can set the publishers and subscribers
-        twist_topic = rospy.get_param('~twist_topic_name', "/terrasentia/cmd_vel")
-        wp_topic    = rospy.get_param('~wp_topic_name', "/terrasentia/path")
+        twist_topic = rospy.get_param('~twist_topic_name', "/terrasentia/mpc_cmd_vel")
+        #wp_topic    = rospy.get_param('~wp_topic_name', "/terrasentia/path")
+        wp_topic = "/terrasentia/mpc_path_ref"
 
         # Subscribers
         rospy.Subscriber("/terrasentia/ekf", Odometry, self.odom_callback, queue_size=1)
@@ -287,6 +289,24 @@ class MPC_NODE:
 
         self.pub_pts_car.publish(ref_pa)
 
+
+def publish_params_from_yaml(namespace, yaml_file):
+    with open(yaml_file, 'r') as stream:
+        params = yaml.safe_load(stream)
+
+    for key, value in params.items():
+        full_param_name = f"{namespace}/{key}"
+        rospy.set_param(full_param_name, value)
+        rospy.loginfo(f"Published parameter '{full_param_name}' with value {value}")
+
+
 if __name__ == '__main__':
+
+    param_namespace = '/terrasentia'
+
+    yaml_file_path = '../configs/mpc.yaml'  # Replace with the path to your YAML file
+    publish_params_from_yaml(param_namespace, yaml_file_path)
+
+
     rospy.init_node('mpc_controller')
     MPC_NODE()

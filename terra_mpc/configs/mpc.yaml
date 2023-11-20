@@ -1,18 +1,18 @@
 mpc2_node: {
-  gain_ctrack_error_x: 10, # larger, more aggressive
-  gain_ctrack_error_y: 10,
-  gain_ctrack_error_theta: 15,
-  terminal_cost_multiplier_x: 15,
-  terminal_cost_multiplier_y: 15,
-  terminal_cost_multiplier_theta: 50,
-  gain_control_effort_linear: 5, # larger, less aggressive
-  gain_control_effort_angular: 1.0,
+  gain_ctrack_error_x: 1000, # larger, more aggressive
+  gain_ctrack_error_y: 1000,
+  gain_ctrack_error_theta: 5000,
+  terminal_cost_multiplier_x: 1500,
+  terminal_cost_multiplier_y: 1500,
+  terminal_cost_multiplier_theta: 5000,
+  gain_control_effort_linear: 10, # larger, less aggressive
+  gain_control_effort_angular: 2.0,
   dt: 0.2,
-  N: 15,
+  N: 10,
   Lbase: 0.27,
-  v_ref: 0.6,
-  v_max: 1.2,
-  v_lin_max: 1.2,
+  v_ref: 0.5,
+  v_max: 0.8,
+  v_lin_max: 0.6,
   v_ang_max: 6.0,
   n_states: 3,
   n_controls: 2,
@@ -22,5 +22,30 @@ mpc2_node: {
   twist_topic_name: /terrasentia/cmd_vel,
   verbose: false
 }
+
+# mpc2_node: {
+#   gain_ctrack_error_x: 10, # larger, more aggressive
+#   gain_ctrack_error_y: 10,
+#   gain_ctrack_error_theta: 15,
+#   terminal_cost_multiplier_x: 15,
+#   terminal_cost_multiplier_y: 15,
+#   terminal_cost_multiplier_theta: 50,
+#   gain_control_effort_linear: 5, # larger, less aggressive
+#   gain_control_effort_angular: 1.0,
+#   dt: 0.2,
+#   N: 15,
+#   Lbase: 0.27,
+#   v_ref: 0.6,
+#   v_max: 1.2,
+#   v_lin_max: 1.2,
+#   v_ang_max: 6.0,
+#   n_states: 3,
+#   n_controls: 2,
+#   mu: 1.0,
+#   nu: 0.2,
+#   wp_topic_name: /terrasentia/path,
+#   twist_topic_name: /terrasentia/cmd_vel,
+#   verbose: false
+# }
 
 
