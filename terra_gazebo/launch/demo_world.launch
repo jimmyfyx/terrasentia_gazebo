@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
-     <!-- <env name="__NV_PRIME_RENDER_OFFLOAD" value="1"/>
-     <env name="__GLX_VENDOR_LIBRARY_NAME" value="nvidia"/> -->
+     <env name="__NV_PRIME_RENDER_OFFLOAD" value="1"/>
+     <env name="__GLX_VENDOR_LIBRARY_NAME" value="nvidia"/>
 
 
      <arg name="robot_ns" default="terrasentia"/>
@@ -26,5 +26,5 @@
      </include>
 
      <include file="$(find terra_gazebo)/launch/spawn_robot.launch" pass_all_args="true"/>
-
+     
 </launch>

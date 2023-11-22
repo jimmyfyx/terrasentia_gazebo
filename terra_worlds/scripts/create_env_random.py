@@ -40,7 +40,7 @@ class EnvCreator:
         self.num_rows = 7
         self.vert_row_len = 5.0  # (m)
         self.hori_row_len = 5.0
-        self.radius = 0.1
+        self.radius = 0.05
         self.stalk_dist = 0.3048
         self.row_dist = 0.76
         self.min_row_len = 4.5  
@@ -55,10 +55,12 @@ class EnvCreator:
         self.forward_plots = 1
         self.sideward_plots = 1
 
-        self.robot_init_margin = 0.2  # (m)
-        self.robot_min_init_x = 4.0
-        self.robot_max_init_yaw = 0.261799  # 15 degrees in radians
-        self.robot_min_init_yaw = -0.261799
+        self.robot_init_margin = 0.25  # (m)
+        self.robot_min_init_x = 3.8
+        self.robot_max_init_x = 4.0
+        self.robot_max_init_yaw = 0.174533*0.5  # 10 degrees in radians
+        self.robot_min_init_yaw = -0.174533*0.5
+        
         self.num_wp = 6  # Number of waypoints per route
 
         # Unique parameters for each environment
@@ -558,7 +560,7 @@ class EnvCreator:
         return a, b, c
     
     @staticmethod
-    def plot_waypoints(init_x, init_y, noi_waypoints, ref_waypoints):
+    def plot_waypoints(env_idx, route_idx, init_x, init_y, noi_waypoints, ref_waypoints):
         noi_x = []
         noi_y = []
         ref_x = []
@@ -568,17 +570,22 @@ class EnvCreator:
         noi_y.append(init_y)
         ref_x.append(init_x)
         ref_y.append(init_y)
-        for i in range(len(noi_waypoints)):
-            noi_x.append(noi_waypoints[i][0])
-            noi_y.append(noi_waypoints[i][1])
-            ref_x.append(ref_waypoints[i][0])
-            ref_y.append(ref_waypoints[i][1])
+        for i in range(len(ref_waypoints)):
+            if i < len(noi_waypoints):
+                noi_x.append(noi_waypoints[i][0])
+                noi_y.append(noi_waypoints[i][1])
+                ref_x.append(ref_waypoints[i][0])
+                ref_y.append(ref_waypoints[i][1])
+            else:
+                ref_x.append(ref_waypoints[i][0])
+                ref_y.append(ref_waypoints[i][1])
         
+        plt.figure(0)
         plt.scatter(noi_x, noi_y, label='Noisy path')
         plt.scatter(ref_x, ref_y, label='Reference path')
         plt.show()
 
-    def create_routes(self, num_routes):
+    def create_routes(self, env_idx, num_routes):
         """Create different routes inside one environment
         """
         '''
@@ -612,86 +619,58 @@ class EnvCreator:
             route_dict["target_lane"] = target_lane
 
             # Robot initial and target pose 
-            init_x = random.uniform(self.robot_min_init_x, self.vert_row_len)
+            init_x = random.uniform(self.robot_min_init_x, self.robot_max_init_x)
             init_y = self.row_dist * init_lane - random.uniform(self.robot_init_margin, self.row_dist - self.robot_init_margin)
             init_yaw = random.uniform(self.robot_min_init_yaw, self.robot_max_init_yaw)
-            noi_target_x = init_x
-            noi_target_y = init_y + (target_lane - init_lane) * self.row_dist
+            
+                        
+            
             ref_target_x = init_x
             ref_target_y = self.row_dist * target_lane - self.row_dist / 2
             route_dict["init_x"] = init_x
             route_dict["init_y"] = init_y
             route_dict["init_yaw"] = init_yaw
-            route_dict["noi_target_x"] = noi_target_x
-            route_dict["noi_target_y"] = noi_target_y
+            
+                                                                                                                                                                         
+            
+            # Fill in waypoints
+            noi_waypoints = [[self.vert_row_len,self.row_dist * target_lane],[self.robot_min_init_x,self.row_dist * (target_lane-1)]]
+            
+
+            ref_init_y = self.row_dist * init_lane - self.row_dist / 2
+
+            route_dict["ref_init_x"] = init_x
+            route_dict["ref_init_y"] = ref_init_y
             route_dict["ref_target_x"] = ref_target_x
             route_dict["ref_target_y"] = ref_target_y
 
-            # Generate parabola connecting initial and target position
-            vertex_x_min = init_x + 0.2
-            vertex_x_max = self.vert_row_len + self.gap_dist - 0.2
-            vertex_x = random.uniform(vertex_x_min, vertex_x_max)
-            noi_vertex_y = init_y + ((noi_target_y - init_y) / 2)
-            ref_vertex_y = init_y + ((ref_target_y - init_y) / 4)
-            noi_vertex = (vertex_x, noi_vertex_y)
-            ref_vertex = (vertex_x, ref_vertex_y)
-            noi_a, noi_b, noi_c = self.find_parabola_coefficients((init_x, init_y), (noi_target_x, noi_target_y), noi_vertex)
-            ref_a, ref_b, ref_c = self.find_parabola_coefficients((init_x, init_y), (ref_target_x, ref_target_y), ref_vertex)       
+            # Define ellipse parameters
+            a = (abs(target_lane-init_lane)*self.row_dist)/2  # Semi-major axis
+            b = 1  # Semi-minor axis
+            h = ref_init_y+(ref_target_y-ref_init_y)/2  # y-coordinate of the center
+            k = self.vert_row_len  # x-coordinate of the center
 
-            # print(init_x, init_y, init_yaw)
-            # print(noi_target_x, noi_target_y)
-            # print(ref_target_x, ref_target_y)    
-            # print(noi_a, noi_b, noi_c)
-            # print(ref_vertex)
-            # print(noi_vertex)
-            # print(ref_a, ref_b, ref_c)                                                                                                                                                                      
-            
-            # Fill in waypoints
-            noi_waypoints = []
-            ref_waypoints = []
-            noi_step = (noi_target_y - init_y) / (self.num_wp - 1)
-            ref_step = (ref_target_y - init_y) / (self.num_wp - 1)
-            noi_target_x_rot = 0
-            noi_target_y_rot = 0
-            for j in range(1, self.num_wp - 1):
-                noi_wp_y = init_y + j * noi_step
-                ref_wp_y = init_y + j * ref_step
-                noi_wp_x = noi_a * (noi_wp_y ** 2) + noi_b * noi_wp_y + noi_c
-                ref_wp_x = ref_a * (ref_wp_y ** 2) + ref_b * ref_wp_y + ref_c
-                
-                # Rotate noisy waypoint w.r.t the robot initial position
-                # First determine the relative position of the waypoint to roboti initial position
-                noi_wp_y_rel = noi_wp_y - init_y
-                noi_wp_x_rel = noi_wp_x - init_x
-                if target_lane - init_lane < 0 and init_yaw < 0:
-                    rot_matrix = np.array([[np.cos(abs(init_yaw)), np.sin(abs(init_yaw))],
-                                           [-np.sin(abs(init_yaw)), np.cos(abs(init_yaw))]])
-                elif target_lane - init_lane < 0 and init_yaw >= 0:
-                    rot_matrix = np.array([[np.cos(abs(init_yaw)), -np.sin(abs(init_yaw))],
-                                           [np.sin(abs(init_yaw)), np.cos(abs(init_yaw))]])
-                elif target_lane - init_lane > 0 and init_yaw < 0:
-                    rot_matrix = np.array([[np.cos(abs(init_yaw)), np.sin(abs(init_yaw))],
-                                           [-np.sin(abs(init_yaw)), np.cos(abs(init_yaw))]])
-                else:
-                    rot_matrix = np.array([[np.cos(abs(init_yaw)), -np.sin(abs(init_yaw))],
-                                           [np.sin(abs(init_yaw)), np.cos(abs(init_yaw))]])
-                rot_noi_wp = np.matmul(rot_matrix, np.array([[noi_wp_x_rel], [noi_wp_y_rel]]))
-                noi_wp_x = init_x + rot_noi_wp[0][0]
-                noi_wp_y = init_y + rot_noi_wp[1][0]
+            # Generate parameter values
+            t = np.linspace(0, np.pi, 10)
 
-                # Detemine rotated target position
-                noi_target_x_rel = noi_target_x - init_x
-                noi_target_y_rel = noi_target_y - init_y
-                rot_noi_target = np.matmul(rot_matrix, np.array([[noi_target_x_rel], [noi_target_y_rel]]))
-                noi_target_x_rot = init_x + rot_noi_target[0][0]
-                noi_target_y_rot = init_y + rot_noi_target[1][0]
+            # Parametric equations for the ellipse
+            y = h + a * np.cos(t)
+            x = k + b * np.sin(t)
 
-                noi_waypoints.append([noi_wp_x, noi_wp_y])
-                ref_waypoints.append([ref_wp_x, ref_wp_y])
+            if init_lane< target_lane:
 
-            noi_waypoints.append([noi_target_x_rot, noi_target_y_rot])
-            ref_waypoints.append([ref_target_x, ref_target_y])
-            # self.plot_waypoints(init_x, init_y, noi_waypoints, ref_waypoints)  # Debug purpose
+                x = np.append(np.append([self.vert_row_len-0.5, self.vert_row_len-0.25],x),[self.vert_row_len-0.25,self.vert_row_len-0.5])[::-1]
+                y = np.append(np.append([ref_target_y, ref_target_y],y),[ref_init_y,ref_init_y])[::-1]
+
+            else:
+
+                x = np.append(np.append([self.vert_row_len-0.5, self.vert_row_len-0.25],x),[self.vert_row_len-0.25,self.vert_row_len-0.5])
+                y = np.append(np.append([ref_init_y,ref_init_y],y),[ref_target_y, ref_target_y])
+
+
+            ref_waypoints = [[x[i],y[i]] for i in range(x.shape[0])]
+
+            # self.plot_waypoints(env_idx, i, init_x, init_y, noi_waypoints, ref_waypoints)  # Debug purpose
             route_dict["noi_waypoints"] = noi_waypoints
             route_dict["ref_waypoints"] = ref_waypoints
 
@@ -732,5 +711,5 @@ if __name__ == "__main__":
 
     for env_idx in range(num_env):
         env_creator.create_env(env_idx)
-        env_creator.create_routes(num_routes)
+        env_creator.create_routes(env_idx, num_routes)
         env_creator.save_config(env_idx)
