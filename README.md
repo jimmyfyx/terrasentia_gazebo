@@ -15,3 +15,14 @@ With specified `num_envs` and `num_routes`, the script can generate random envir
 
 ## `rowswitch.py`
 This is a ROS node that is used to publish real-time MPC paths based on current robot position and routes information in `/terra_worlds/configs/env_{env_idx}`.
+
+## `Record rosbag files`
+- Create the environment with create_env_random.py
+- Specify the environment in farm.world and record_data.launch
+- Specify the rosbag path in record_data.launch
+- Run
+```
+roslaunch terra_gazebo demo_world.launch
+python3 mpd_node.py
+roslaunch terra_gazebo record_data.launch
+```
