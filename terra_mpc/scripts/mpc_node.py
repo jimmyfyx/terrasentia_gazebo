@@ -41,20 +41,13 @@ class MPC_NODE:
 
         # And after setting everything we can set the publishers and subscribers
         twist_topic = rospy.get_param('~twist_topic_name', "/terrasentia/mpc_cmd_vel")
-<<<<<<< HEAD
         # twist_topic = rospy.get_param('~twist_topic_name', "/terrasentia/cmd_vel")
-=======
->>>>>>> 016d139e5e9543ff2a55d7b1c44cb032999d6ad7
         #wp_topic    = rospy.get_param('~wp_topic_name', "/terrasentia/path")
         wp_topic = "/terrasentia/mpc_path_ref"
 
         # Subscribers
         rospy.Subscriber("/terrasentia/ekf", Odometry, self.odom_callback, queue_size=1)
-<<<<<<< HEAD
         rospy.Subscriber(wp_topic, Path, self.mpc_callback, queue_size=1)
-=======
-        rospy.Subscriber(wp_topic + '2', Path, self.mpc_callback, queue_size=1)
->>>>>>> 016d139e5e9543ff2a55d7b1c44cb032999d6ad7
         
 
         # Publisher

@@ -29,12 +29,8 @@ class RowSwitch:
         
 
         # Read routes
-<<<<<<< HEAD
         self.env_config_path = rospy.get_param('~env_config_path', "/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0")
         # self.env_config_path = "/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0"
-=======
-        self.env_config_path = "/home/arun/catkin_ws/src/terrasentia_gazebo/terra_worlds/configs/env_0"
->>>>>>> 016d139e5e9543ff2a55d7b1c44cb032999d6ad7
         f = open(f"{self.env_config_path}/routes_config.json")
         self.routes = json.load(f)
 
@@ -101,7 +97,6 @@ class RowSwitch:
         self.robot_quaty = msg.pose.pose.orientation.y
         self.robot_quatz = msg.pose.pose.orientation.z
         self.robot_quatw = msg.pose.pose.orientation.w
-<<<<<<< HEAD
 
         # Transformation matrix (world -> body)
         robot_pos = np.array([self.robot_x, self.robot_y, 0.0])
@@ -109,15 +104,6 @@ class RowSwitch:
         norm = np.linalg.norm(robot_quat)
         robot_quat_norm = robot_quat / norm
 
-=======
-
-        # Transformation matrix (world -> body)
-        robot_pos = np.array([self.robot_x, self.robot_y, 0.0])
-        robot_quat = np.array([self.robot_quatx, self.robot_quaty, self.robot_quatz, self.robot_quatw])
-        norm = np.linalg.norm(robot_quat)
-        robot_quat_norm = robot_quat / norm
-
->>>>>>> 016d139e5e9543ff2a55d7b1c44cb032999d6ad7
         if not self.env_complete and not self.final_stage:
             route = self.routes[f"route_{self.cur_route}"]
             noi_route = route["noi_waypoints"]
