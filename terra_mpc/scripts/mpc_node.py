@@ -11,6 +11,7 @@ from geometry_msgs.msg import TwistStamped, PoseArray, Pose
 from sensor_msgs.msg import Image
 from fpn_msgs.srv import ZZsetString, ZZsetStringResponse
 import yaml
+import argparse
 
 from mpc.mpc import MPC_CONTROLLER
 from utils.mpc_utils import euler_from_quaternion, quaternion_from_euler
@@ -23,7 +24,7 @@ def mylogerr(msg=''):
     rospy.logerr('['+str(rospy.get_name() + '] ' + str(msg)))
 
 class MPC_NODE:
-    def __init__(self):
+    def __init__(self,args):
         self.params = {}
         self.params['verbose'] = True
         self.params['frame_id'] = "base_footprint"
@@ -43,7 +44,10 @@ class MPC_NODE:
         twist_topic = rospy.get_param('~twist_topic_name', "/terrasentia/mpc_cmd_vel")
         # twist_topic = rospy.get_param('~twist_topic_name', "/terrasentia/cmd_vel")
         #wp_topic    = rospy.get_param('~wp_topic_name', "/terrasentia/path")
-        wp_topic = "/terrasentia/mpc_path_ref"
+        if args.mode=="inference":
+            wp_topic = "/terrasentia/mpc_path_ref_predicted"
+        else:
+            wp_topic = "/terrasentia/mpc_path_ref"
 
         # Subscribers
         rospy.Subscriber("/terrasentia/ekf", Odometry, self.odom_callback, queue_size=1)
@@ -303,6 +307,10 @@ def publish_params_from_yaml(namespace, yaml_file):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', default='datagen',type=str,help="whether data generation mode or inference mode")   
+    args = parser.parse_args()
+
     param_namespace = '/terrasentia'
 
     yaml_file_path = '../configs/mpc.yaml'  # Replace with the path to your YAML file
@@ -310,4 +318,4 @@ if __name__ == '__main__':
 
 
     rospy.init_node('mpc_controller')
-    MPC_NODE()
+    MPC_NODE(args)

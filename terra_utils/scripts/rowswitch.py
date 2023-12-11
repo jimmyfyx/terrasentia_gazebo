@@ -13,20 +13,14 @@ from geometry_msgs.msg import TwistStamped, PoseStamped
 from nav_msgs.msg import Odometry, Path
 from std_msgs.msg import Int8, Float32MultiArray
 from sensor_msgs.msg import CameraInfo, CompressedImage
+import argparse
 
 
 def mylogerr(msg=''):
     rospy.logerr('['+str(rospy.get_name() + '] ' + str(msg)))
 
 class RowSwitch:
-    def __init__(self):
-        self.pub_path_noi = rospy.Publisher("/terrasentia/mpc_path_noi", Path, queue_size=10)
-        self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
-        self.pub_route_id = rospy.Publisher("/terrasentia/route_id", Int8, queue_size=10)
-        self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
-        self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
-        self.sub_mpc_cmd = rospy.Subscriber("/terrasentia/mpc_cmd_vel", TwistStamped, self.mpc_cmd_callback)
-        
+    def __init__(self, args):
 
         # Read routes
         self.env_config_path = rospy.get_param('~env_config_path', "/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0")
@@ -52,8 +46,23 @@ class RowSwitch:
         self.robot_quatz = 0.0
         self.robot_quatw = 0.0
 
+        self.args = args
+
         self.set_robot_state()
     
+
+        self.pub_path_noi = rospy.Publisher("/terrasentia/mpc_path_noi", Path, queue_size=10)
+        self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
+        self.pub_route_id = rospy.Publisher("/terrasentia/route_id", Int8, queue_size=10)
+        self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
+        self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
+        self.sub_mpc_cmd = rospy.Subscriber("/terrasentia/mpc_cmd_vel", TwistStamped, self.mpc_cmd_callback)
+       
+
+        if self.args.mode == 'inference':
+            self.success = []
+            self.pub_noi_goal = rospy.Publisher("/terrasentia/noi_goal", PoseStamped, queue_size=10)
+            self.pub_turn_left = rospy.Publisher("/terrasentia/turn_left",Int8, queue_size=1)
     @staticmethod
     def get_quaternion_from_euler(roll, pitch, yaw):
         """
@@ -83,16 +92,22 @@ class RowSwitch:
         twist_stamped.twist.linear.z = msg.twist.linear.z
         twist_stamped.twist.angular.x = msg.twist.angular.x
         twist_stamped.twist.angular.y = msg.twist.angular.y
-        if 8 <= self.nearest_wp_index <= 13: # adding noise in this interval
-            twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 10.0*(np.random.rand()-0.5), -6.0, 6.0)
-        else:
+        if self.args.mode == 'inference':
             twist_stamped.twist.angular.z = msg.twist.angular.z
-        self.pub_twist.publish(twist_stamped)
+            self.pub_twist.publish(twist_stamped)
+        
+        else:
+            if 2 <= self.nearest_wp_index <= 11: # adding noise in this interval
+                twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0*(np.random.rand()-0.5), -6.0, 6.0)
+            else:
+                twist_stamped.twist.angular.z = msg.twist.angular.z
+            self.pub_twist.publish(twist_stamped)
         # print(self.nearest_wp_index)
         
     def odom_callback(self, msg):
         self.robot_x = msg.pose.pose.position.x
         self.robot_y = msg.pose.pose.position.y
+        
         self.robot_quatx = msg.pose.pose.orientation.x
         self.robot_quaty = msg.pose.pose.orientation.y
         self.robot_quatz = msg.pose.pose.orientation.z
@@ -130,9 +145,17 @@ class RowSwitch:
             self.pub_route_id.publish(self.cur_route)
 
             # Whether the robot complete all routes or current route
-            if (abs(self.robot_x - ref_target_x) < 0.1 and abs(self.robot_y - ref_target_y) < 0.1) or self.nearest_wp_index==14:
+            if self.args.mode == 'inference':
+                threshold = 1
+            else: 
+                threshold = 0.1
+                
+            if (abs(self.robot_x - ref_target_x) < threshold and abs(self.robot_y - ref_target_y) < threshold) or self.nearest_wp_index==14:
                 print('goal reached')
                 self.final_stage = True
+                if self.args.mode == 'inference':
+                    self.success.append(1)
+
             else:
                 # Prepare MPC path (noisy and reference)
                 # Detremine MPC path in world frame
@@ -163,7 +186,24 @@ class RowSwitch:
                     rotation_inv = rotation.inv()
                     point_body = rotation_inv.apply(translation)
                     self.mpc_path_body_ref.append([point_body[0], point_body[1]])
-                
+
+                if self.args.mode == 'inference':
+                    pt1 = np.array([self.mpc_path_body_noi[0][0], self.mpc_path_body_noi[0][1], 0.0])
+                    pt2 = np.array([self.mpc_path_body_noi[1][0], self.mpc_path_body_noi[1][1], 0.0])
+                    noi_goal = 0.5*(pt1+pt2)
+                    pose = PoseStamped()
+                    pose.header.frame_id = "base_footprint"
+                    pose.header.stamp = rospy.Time.now()
+                    pose.pose.position.x = noi_goal[0]
+                    pose.pose.position.y = noi_goal[1]
+                    self.pub_noi_goal.publish(pose)
+
+                    if init_lane<target_lane:
+                        self.pub_turn_left.publish(data=1)
+
+                    else:
+                        self.pub_turn_left.publish(data=0)
+
                 # Publish path
                 mpc_path_noi = Path()
                 mpc_path_noi.header.frame_id = "base_footprint"
@@ -224,6 +264,11 @@ class RowSwitch:
             init_x = route["init_x"]
             init_y = route["init_y"]
             init_yaw = route["init_yaw"]
+            if self.args.mode=="inference":
+                init_x = route["ref_waypoints"][0][0]
+                init_y = route["ref_waypoints"][0][1]
+            #     init_yaw = -2.6
+            
 
             quat = self.get_quaternion_from_euler(0.0, 0.0, init_yaw)
 
@@ -242,9 +287,9 @@ class RowSwitch:
         except rospy.ServiceException as e:
             rospy.loginfo("Service call failed")
             
-def main():
+def main(args):
     rospy.init_node('rowswitch_node')
-    row_switch_node = RowSwitch()
+    row_switch_node = RowSwitch(args)
     rospy.loginfo("Rowswitch node has started...")
     try:
         rospy.spin()
@@ -254,4 +299,8 @@ def main():
         
 
 if __name__ == '__main__':
-    sys.exit(main() or 0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', default='datagen',type=str,help="whether data generation mode or inference mode")   
+    args = parser.parse_args()
+
+    sys.exit(main(args) or 0)
