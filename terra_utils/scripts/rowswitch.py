@@ -99,13 +99,7 @@ class RowSwitch:
                 twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
             else:
                 twist_stamped.twist.angular.z = msg.twist.angular.z
-            self.pub_twist.publish(twist_stamped)   
-
-        if 2 <= self.nearest_wp_index <= 11: # Adding noise in this interval
-            twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
-        else:
-            twist_stamped.twist.angular.z = msg.twist.angular.z
-        self.pub_twist.publish(twist_stamped)    
+            self.pub_twist.publish(twist_stamped)     
         
     def odom_callback(self, msg):
         self.robot_x = msg.pose.pose.position.x
