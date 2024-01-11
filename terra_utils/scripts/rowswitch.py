@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rospy 
 import rospkg 
+import argparse
 import sys
 import numpy as np
 import json
@@ -13,7 +14,6 @@ from geometry_msgs.msg import TwistStamped, PoseStamped
 from nav_msgs.msg import Odometry, Path
 from std_msgs.msg import Int8, Float32MultiArray
 from sensor_msgs.msg import CameraInfo, CompressedImage
-import argparse
 
 
 def mylogerr(msg=''):
@@ -21,10 +21,8 @@ def mylogerr(msg=''):
 
 class RowSwitch:
     def __init__(self, args):
-
         # Read routes
         self.env_config_path = rospy.get_param('~env_config_path', "/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0")
-        # self.env_config_path = "/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0"
         f = open(f"{self.env_config_path}/routes_config.json")
         self.routes = json.load(f)
 
@@ -46,23 +44,22 @@ class RowSwitch:
         self.robot_quatz = 0.0
         self.robot_quatw = 0.0
 
-        self.args = args
-
-        self.set_robot_state()
-    
-
+        # Publishers and Subscribers
         self.pub_path_noi = rospy.Publisher("/terrasentia/mpc_path_noi", Path, queue_size=10)
         self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
         self.pub_route_id = rospy.Publisher("/terrasentia/route_id", Int8, queue_size=10)
         self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
         self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
         self.sub_mpc_cmd = rospy.Subscriber("/terrasentia/mpc_cmd_vel", TwistStamped, self.mpc_cmd_callback)
-       
 
+        self.set_robot_state()  # Set robot initial pose
+       
+        self.args = args
         if self.args.mode == 'inference':
             self.success = []
             self.pub_noi_goal = rospy.Publisher("/terrasentia/noi_goal", PoseStamped, queue_size=10)
             self.pub_turn_left = rospy.Publisher("/terrasentia/turn_left",Int8, queue_size=1)
+
     @staticmethod
     def get_quaternion_from_euler(roll, pitch, yaw):
         """
@@ -82,7 +79,8 @@ class RowSwitch:
         qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
         
         return [qx, qy, qz, qw]
-    def mpc_cmd_callback(self,msg):
+    
+    def mpc_cmd_callback(self, msg):
         """
         Adding noise to the MPC command
         """
@@ -92,28 +90,32 @@ class RowSwitch:
         twist_stamped.twist.linear.z = msg.twist.linear.z
         twist_stamped.twist.angular.x = msg.twist.angular.x
         twist_stamped.twist.angular.y = msg.twist.angular.y
+
         if self.args.mode == 'inference':
             twist_stamped.twist.angular.z = msg.twist.angular.z
             self.pub_twist.publish(twist_stamped)
-        
         else:
-            if 2 <= self.nearest_wp_index <= 11: # adding noise in this interval
-                twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0*(np.random.rand()-0.5), -6.0, 6.0)
+            if 2 <= self.nearest_wp_index <= 11: # Adding noise in this interval
+                twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
             else:
                 twist_stamped.twist.angular.z = msg.twist.angular.z
-            self.pub_twist.publish(twist_stamped)
-        # print(self.nearest_wp_index)
+            self.pub_twist.publish(twist_stamped)   
+
+        if 2 <= self.nearest_wp_index <= 11: # Adding noise in this interval
+            twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
+        else:
+            twist_stamped.twist.angular.z = msg.twist.angular.z
+        self.pub_twist.publish(twist_stamped)    
         
     def odom_callback(self, msg):
         self.robot_x = msg.pose.pose.position.x
         self.robot_y = msg.pose.pose.position.y
-        
         self.robot_quatx = msg.pose.pose.orientation.x
         self.robot_quaty = msg.pose.pose.orientation.y
         self.robot_quatz = msg.pose.pose.orientation.z
         self.robot_quatw = msg.pose.pose.orientation.w
 
-        # Transformation matrix (world -> body)
+        # Transformation (world -> body)
         robot_pos = np.array([self.robot_x, self.robot_y, 0.0])
         robot_quat = np.array([self.robot_quatx, self.robot_quaty, self.robot_quatz, self.robot_quatw])
         norm = np.linalg.norm(robot_quat)
@@ -127,49 +129,49 @@ class RowSwitch:
             target_lane = route["target_lane"]
             init_x = route["init_x"]
             init_y = route["init_y"]
-            ref_init_x = route["ref_init_x"] #note ref_init_x is same as init_x
+            ref_init_x = route["ref_init_x"] # Note: ref_init_x is same as init_x
             ref_init_y = route["ref_init_y"]
             ref_target_x = route["ref_target_x"]
             ref_target_y = route["ref_target_y"]
 
-            # ref_target_x = route["ref_target_x"]
-            # ref_target_y = route["ref_target_y"]
-            # noi_target_x = route["noi_target_x"]
-            # noi_target_y = route["noi_target_y"]
+            '''            
+            ref_target_x = route["ref_target_x"]
+            ref_target_y = route["ref_target_y"]
+            noi_target_x = route["noi_target_x"]
+            noi_target_y = route["noi_target_y"]
 
-            # print('x_diff', self.robot_x - noi_target_x)
-            # print('y_diff', self.robot_y - noi_target_y)
-            # print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
+            print('x_diff', self.robot_x - noi_target_x)
+            print('y_diff', self.robot_y - noi_target_y)
+            print(f'robot_x:{self.robot_x}, robot_y:{self.robot_y}')
+            '''
             
             # Publish current route id
             self.pub_route_id.publish(self.cur_route)
 
-            # Whether the robot complete all routes or current route
+            # Different goal reaching conditions for inference and data generating mode
             if self.args.mode == 'inference':
                 threshold = 1
             else: 
                 threshold = 0.1
                 
-            if (abs(self.robot_x - ref_target_x) < threshold and abs(self.robot_y - ref_target_y) < threshold) or self.nearest_wp_index==14:
-                print('goal reached')
+            if (abs(self.robot_x - ref_target_x) < threshold and abs(self.robot_y - ref_target_y) < threshold) or self.nearest_wp_index == 14:
+                # Reach the goal for current route
+                print('Goal reached!')
                 self.final_stage = True
                 if self.args.mode == 'inference':
                     self.success.append(1)
-
             else:
                 # Prepare MPC path (noisy and reference)
-                # Detremine MPC path in world frame
 
+                # Detremine MPC paths in world frame
                 self.mpc_path_world_noi = noi_route.copy()
-
-                for i in range(self.nearest_wp_index,len(ref_route)):
+                for i in range(self.nearest_wp_index, len(ref_route)):
+                    # Prepare the reference MPC path with remaining waypoints
                     if abs(self.robot_x - ref_route[self.nearest_wp_index][0]) < 0.2 and abs(self.robot_y - ref_route[self.nearest_wp_index][1]) < 0.2:
                         self.nearest_wp_index += 1
                     self.mpc_path_world_ref = ref_route[self.nearest_wp_index:]
 
-                
-
-                # Transform MPC path to body frame
+                # Transform MPC paths to body frame
                 self.mpc_path_body_noi = []
                 self.mpc_path_body_ref = []
                 for i in range(len(self.mpc_path_world_noi)):
@@ -190,7 +192,7 @@ class RowSwitch:
                 if self.args.mode == 'inference':
                     pt1 = np.array([self.mpc_path_body_noi[0][0], self.mpc_path_body_noi[0][1], 0.0])
                     pt2 = np.array([self.mpc_path_body_noi[1][0], self.mpc_path_body_noi[1][1], 0.0])
-                    noi_goal = 0.5*(pt1+pt2)
+                    noi_goal = 0.5 * (pt1 + pt2)
                     pose = PoseStamped()
                     pose.header.frame_id = "base_footprint"
                     pose.header.stamp = rospy.Time.now()
@@ -198,9 +200,8 @@ class RowSwitch:
                     pose.pose.position.y = noi_goal[1]
                     self.pub_noi_goal.publish(pose)
 
-                    if init_lane<target_lane:
+                    if init_lane < target_lane:
                         self.pub_turn_left.publish(data=1)
-
                     else:
                         self.pub_turn_left.publish(data=0)
 
@@ -229,18 +230,15 @@ class RowSwitch:
                 mpc_path_ref.header.stamp = rospy.Time.now()
                 self.pub_path_noi.publish(mpc_path_noi)
                 self.pub_path_ref.publish(mpc_path_ref)
-
         elif not self.env_complete and self.final_stage:
-           
             self.cur_route += 1
             if self.cur_route >= self.num_routes:
                 self.env_complete = True  # Complete all routes
                 self.final_stage = False
             else:
-                self.final_stage = False
+                self.final_stage = False  # Complete the current route, move to the next route
                 self.nearest_wp_index = 0
                 self.set_robot_state()
-
         else:
             # Stop the robot
             twist_stamped = TwistStamped()
@@ -253,9 +251,6 @@ class RowSwitch:
 
             self.pub_twist.publish(twist_stamped)
 
-        
-            
-
     def set_robot_state(self):
         rospy.wait_for_service('/gazebo/set_model_state')
         try:
@@ -267,16 +262,14 @@ class RowSwitch:
             if self.args.mode=="inference":
                 init_x = route["ref_waypoints"][0][0]
                 init_y = route["ref_waypoints"][0][1]
-            #     init_yaw = -2.6
             
-
             quat = self.get_quaternion_from_euler(0.0, 0.0, init_yaw)
 
             state_msg = ModelState()
             state_msg.model_name = 'terrasentia'
             state_msg.pose.position.x = init_x
             state_msg.pose.position.y = init_y
-            state_msg.pose.position.z = 0.2
+            state_msg.pose.position.z = 0.5
             state_msg.pose.orientation.x = quat[0]
             state_msg.pose.orientation.y = quat[1]
             state_msg.pose.orientation.z = quat[2]
@@ -297,7 +290,6 @@ def main(args):
         mylogerr("Shutting down node")
  
         
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', default='datagen',type=str,help="whether data generation mode or inference mode")   

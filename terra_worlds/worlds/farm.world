@@ -40,7 +40,7 @@
           </scene>
 
           <include>
-               <uri>model://heightmap_flat</uri>
+               <uri>model://heightmap_cornfield</uri>
                <name>height_map</name>
                <pose>0 0 0 0 0 0</pose>
           </include>

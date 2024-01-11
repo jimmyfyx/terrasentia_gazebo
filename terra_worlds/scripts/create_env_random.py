@@ -58,8 +58,8 @@ class EnvCreator:
         self.robot_init_margin = 0.25  # (m)
         self.robot_min_init_x = 3.8
         self.robot_max_init_x = 4.0
-        self.robot_max_init_yaw = 0.174533*0.5  # 10 degrees in radians
-        self.robot_min_init_yaw = -0.174533*0.5
+        self.robot_max_init_yaw = 0.174533 * 0.5  # 5 degrees in radians
+        self.robot_min_init_yaw = -0.174533 * 0.5
         
         self.num_wp = 6  # Number of waypoints per route
 
@@ -176,7 +176,6 @@ class EnvCreator:
                     # Calculate and store stalk data for output
                     hori_centers[0, index] = origin_y + hori_dCol * stalk  # flip x and y direction (horizontal rows align with y axis)
                     hori_centers[1, index] = origin_x + hori_dRow * row
-                    #print centers[0, index]
 
                     # Keep track of the current stalk's crop plot indices (i.e what row and plant)
                     hori_centers[2, index] = row
@@ -464,7 +463,7 @@ class EnvCreator:
 
         num_plots = self.forward_plots * self.sideward_plots  # Always only one plot
         plot_width = self.row_dist * (self.num_rows - 1)
-        self.gap_dist = random.uniform(1.5, 2.0)  # gap between horizontal and vertical plots (m) 
+        self.gap_dist = 0.76  # Gap between horizontal and vertical plots (m)
 
         final_xml_str = ""
         shapefile_str = field_name + "\n\n" + "PLOTS\n" + str(1) + "\n\n"
@@ -561,27 +560,15 @@ class EnvCreator:
     
     @staticmethod
     def plot_waypoints(env_idx, route_idx, init_x, init_y, noi_waypoints, ref_waypoints):
-        noi_x = []
-        noi_y = []
         ref_x = []
         ref_y = []
 
-        noi_x.append(init_x)
-        noi_y.append(init_y)
-        ref_x.append(init_x)
-        ref_y.append(init_y)
         for i in range(len(ref_waypoints)):
-            if i < len(noi_waypoints):
-                noi_x.append(noi_waypoints[i][0])
-                noi_y.append(noi_waypoints[i][1])
-                ref_x.append(ref_waypoints[i][0])
-                ref_y.append(ref_waypoints[i][1])
-            else:
-                ref_x.append(ref_waypoints[i][0])
-                ref_y.append(ref_waypoints[i][1])
+            ref_x.append(ref_waypoints[i][0])
+            ref_y.append(ref_waypoints[i][1])
         
         plt.figure(0)
-        plt.scatter(noi_x, noi_y, label='Noisy path')
+        # plt.scatter(noi_x, noi_y, label='Noisy path')
         plt.scatter(ref_x, ref_y, label='Reference path')
         plt.show()
 
@@ -618,36 +605,30 @@ class EnvCreator:
             route_dict["init_lane"] = init_lane
             route_dict["target_lane"] = target_lane
 
-            # Robot initial and target pose 
+            # Robot initial pose 
             init_x = random.uniform(self.robot_min_init_x, self.robot_max_init_x)
             init_y = self.row_dist * init_lane - random.uniform(self.robot_init_margin, self.row_dist - self.robot_init_margin)
             init_yaw = random.uniform(self.robot_min_init_yaw, self.robot_max_init_yaw)
-            
-                        
-            
-            ref_target_x = init_x
-            ref_target_y = self.row_dist * target_lane - self.row_dist / 2
             route_dict["init_x"] = init_x
             route_dict["init_y"] = init_y
-            route_dict["init_yaw"] = init_yaw
-            
-                                                                                                                                                                         
-            
-            # Fill in waypoints
-            noi_waypoints = [[self.vert_row_len,self.row_dist * target_lane],[self.robot_min_init_x,self.row_dist * (target_lane-1)]]
-            
+            route_dict["init_yaw"] = init_yaw 
 
+            # Reference initial and target pose
             ref_init_y = self.row_dist * init_lane - self.row_dist / 2
-
+            ref_target_x = init_x
+            ref_target_y = self.row_dist * target_lane - self.row_dist / 2
             route_dict["ref_init_x"] = init_x
             route_dict["ref_init_y"] = ref_init_y
             route_dict["ref_target_x"] = ref_target_x
             route_dict["ref_target_y"] = ref_target_y
-
+                                                                                                                                                                           
+            # Fill in waypoints
+            noi_waypoints = [[self.vert_row_len, self.row_dist * target_lane], [self.robot_min_init_x, self.row_dist * (target_lane - 1)]]
+    
             # Define ellipse parameters
-            a = (abs(target_lane-init_lane)*self.row_dist)/2  # Semi-major axis
-            b = 1  # Semi-minor axis
-            h = ref_init_y+(ref_target_y-ref_init_y)/2  # y-coordinate of the center
+            a = (abs(target_lane - init_lane) * self.row_dist) / 2  # Semi-major axis
+            b = 0.55  # Semi-minor axis
+            h = ref_init_y + (ref_target_y - ref_init_y) / 2  # y-coordinate of the center
             k = self.vert_row_len  # x-coordinate of the center
 
             # Generate parameter values
@@ -657,18 +638,13 @@ class EnvCreator:
             y = h + a * np.cos(t)
             x = k + b * np.sin(t)
 
-            if init_lane< target_lane:
-
-                x = np.append(np.append([self.vert_row_len-0.5, self.vert_row_len-0.25],x),[self.vert_row_len-0.25,self.vert_row_len-0.5])[::-1]
-                y = np.append(np.append([ref_target_y, ref_target_y],y),[ref_init_y,ref_init_y])[::-1]
-
+            if init_lane < target_lane:
+                x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])[::-1]
+                y = np.append(np.append([ref_target_y, ref_target_y], y), [ref_init_y, ref_init_y])[::-1]
             else:
-
-                x = np.append(np.append([self.vert_row_len-0.5, self.vert_row_len-0.25],x),[self.vert_row_len-0.25,self.vert_row_len-0.5])
-                y = np.append(np.append([ref_init_y,ref_init_y],y),[ref_target_y, ref_target_y])
-
-
-            ref_waypoints = [[x[i],y[i]] for i in range(x.shape[0])]
+                x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])
+                y = np.append(np.append([ref_init_y, ref_init_y], y), [ref_target_y, ref_target_y])
+            ref_waypoints = [[x[i], y[i]] for i in range(x.shape[0])]
 
             # self.plot_waypoints(env_idx, i, init_x, init_y, noi_waypoints, ref_waypoints)  # Debug purpose
             route_dict["noi_waypoints"] = noi_waypoints
