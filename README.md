@@ -43,5 +43,9 @@ In `model.sdf`, make sure it includes the correct path to the heightmap image fo
 <size>30 30 0.25</size>
 ```
 The size is specified for both collision and visual, representing the 3D size of the terrain in meters (xyz). Particularly, the specified height represents the maximum height for the terrain, which are represented by the white pixels in the heightmap. 
+### Corresponding modifications for scripts
+When a new terrain is applied, modify the following parameters of the robot:
+- In `/terra_gazebo/launch/spawn_robot/launch`, modify the initial z position of the robot according to the maximum height of the terrain
+- Similarly, in `rowswitch.py`, under the function `set_robot_state()`, modify the z position of the robot when respawning
 
 
