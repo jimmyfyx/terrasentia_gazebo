@@ -263,7 +263,7 @@ class RowSwitch:
             state_msg.model_name = 'terrasentia'
             state_msg.pose.position.x = init_x
             state_msg.pose.position.y = init_y
-            state_msg.pose.position.z = 0.5
+            state_msg.pose.position.z = 0.3
             state_msg.pose.orientation.x = quat[0]
             state_msg.pose.orientation.y = quat[1]
             state_msg.pose.orientation.z = quat[2]
