@@ -627,7 +627,7 @@ class EnvCreator:
     
             # Define ellipse parameters
             a = (abs(target_lane - init_lane) * self.row_dist) / 2  # Semi-major axis
-            b = 0.55  # Semi-minor axis
+            b = 0.5  # Semi-minor axis
             h = ref_init_y + (ref_target_y - ref_init_y) / 2  # y-coordinate of the center
             k = self.vert_row_len  # x-coordinate of the center
 
