@@ -16,7 +16,7 @@ With specified `num_envs` and `num_routes`, the script can generate random envir
 ## `rowswitch.py`
 This is a ROS node that is used to publish real-time MPC paths based on current robot position and routes information in `/terra_worlds/configs/env_{env_idx}`.
 
-## Record rosbag files
+## Record rosbag files (Manually)
 - Create the environment with `create_env_random.py`
 - Specify the environment in `farm.world` and `record_data.launch`
 - Specify the rosbag and environment config path in `record_data.launch`
@@ -25,6 +25,22 @@ This is a ROS node that is used to publish real-time MPC paths based on current 
 roslaunch terra_gazebo demo_world.launch
 python3 mpc_node.py
 roslaunch terra_gazebo record_data.launch
+```
+
+## Record rosbag files (Automatically)
+- Place `record_data.py` with the other `terra_xxx` folders in the same directory
+- Create the environments with `create_env_random.py`
+- Specify the paths in the initialization of `RecordTrajectoryLauncher` of `record_data.py`
+    - `devel_dir`: The path of the `devel` folder in ROS workspace
+    - `mpc_path`: The folder containing the `mpc_node.py` script
+    - `world_file`: The path of the world file `farm.world`
+    - `env_config_path`: The folder containing configurations for all environments (`.../terra_worlds/configs`)
+    - `rosbag_path`: The folder to save rosbags
+    - `gazebo_launch_file` and `record_launch_file` should not require changes
+- Install the package `coloredlogs` with the command `pip install coloredlogs`
+- Run
+```
+python3 record_data.py [args: env_start_idx, env_end_idx]
 ```
 
 ## Customize terrain
