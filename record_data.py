@@ -21,7 +21,7 @@ class RecordTrajectoryLauncher:
 
         self.devel_dir = '/home/jimmy/catkin_ws/devel'
         self.gazebo_launch_file = 'demo_world.launch'
-        self.mpc_node = '/home/jimmy/catkin_ws/src/terra-simulation/terra_mpc/scripts/mpc_node.py'
+        self.mpc_path = '/home/jimmy/catkin_ws/src/terra-simulation/terra_mpc/scripts'
         self.record_launch_file = 'record_data.launch'
         self.world_file = '/home/jimmy/catkin_ws/src/terra-simulation/terra_worlds/worlds/farm.world'
         self.env_config_path = '/home/jimmy/catkin_ws/src/terra-simulation/terra_worlds/configs'
@@ -92,8 +92,8 @@ class RecordTrajectoryLauncher:
         logger.info(f'Launching MPC node ...')
 
         source_command = self._sourced_command()
-        launch_command = source_command + ' && cd /home/jimmy/catkin_ws/src/terra-simulation/terra_mpc/scripts'
-        launch_command += f' && python3 {self.mpc_node}'
+        launch_command = source_command + f' && cd {self.mpc_path}'
+        launch_command += f' && python3 mpc_node.py'
 
         return subprocess.Popen(
             launch_command,
