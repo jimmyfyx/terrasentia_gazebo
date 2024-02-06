@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name = "env_config_path" default="/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0"/>
-    <arg name = "rosbag_path" value="/home/daslab/Documents/rosbags/corn_env0.bag"/>
+    <arg name = "rosbag_path" default="/home/daslab/Documents/rosbags/corn_env0.bag"/>
     <arg name = "main_topics" value="/mpc_node/pts_car /terrasentia/center_zed2/depth/depth_registered /terrasentia/left_zed2/depth/depth_registered /terrasentia/right_zed2/depth/depth_registered /terrasentia/mpc_cmd_vel /terrasentia/mpc_path_ref /terrasentia/motion_command /terrasentia/ground_truth /terrasentia/route_id /tf"/>
     
     
