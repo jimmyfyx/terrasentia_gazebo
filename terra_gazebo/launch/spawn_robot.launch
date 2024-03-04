@@ -25,24 +25,9 @@
 		<node pkg="tf" type="static_transform_publisher" name="zed2baselink" args="0.156 0 0.283 0 0 0 $(arg ekf_frame_id) zed2_camera_center 10" />
 		<node pkg="tf" type="static_transform_publisher" name="grid2robot" args="0 0 0 0 0 0 1 $(arg ekf_frame_id) grid 10" />
 		<node pkg="tf" type="static_transform_publisher" name="zedlaser2baselink" args="0.156 0 0.283 0 0 0 $(arg ekf_frame_id) camera_depth_frame 10" />
-		
 
-		<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="">
-
-			<remap from="image"       to="/terrasentia/zed2/depth/depth_registered"/> <!-- change here for your camera depth topic name. Default: "/camera/depth/image_raw" -->
-
-			<remap from="camera_info" to="/terrasentia/zed2/depth/camera_info"/> 
-			<!-- the remap for camera_info by default uses the same path as the one given to the image topic. Default: "<path_to_image_topic>/camera_info>" -->
-
-			<!-- PARAMETERS: -->
-			<!-- These are the default values. --> 
-			<param name="scan_height"     type="int"    value="1"/> <!-- default: 1 pixel. Number of pixel rows used to generate laser scan. -->
-			<param name="scan_time"       type="double" value="0.033"/> <!-- default:0.033, 30 FPS . Time between scans. -->
-			<param name="range_min"       type="double" value="0.1"/> <!--default:0.45m. Ranges less than this are considered -Inf. -->
-			<param name="range_max"       type="double" value="10.0"/> <!--default: 10m. Ranges less than this are considered +Inf. -->
-			<param name="output_frame_id" type="str"    value="camera_depth_frame"/> <!--default: camera_depth_frame. Frame id of the laser scan. -->
-			
-		</node>
+		<node pkg="terra_utils" type="rowfollow_gt.py" name="heading_distance_gt" output="log"></node>
+		<node pkg="terra_utils" type="perception_node_kp.py" name="keypoint_prediction" output="log"></node>
 
 
 	</group>

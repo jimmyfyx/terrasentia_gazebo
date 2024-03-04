@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<launch> 
-     <node pkg="terra_utils" type="simulation_teleporter.py" name="autonomy_test_handler" output="log"></node>
-</launch>

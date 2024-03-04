@@ -28,13 +28,13 @@ from trajectory_utils2 import*
 
 
 #stalk_models=["sorghum_variant_6" , "sorghum_variant_7", "sorghum_variant_8"]
-stalk_models = ["corn_variant_2", "corn_variant_3", "corn_variant_4"]
+stalk_models = ["tobacco_variant_8","tobacco_variant_8","tobacco_variant_8"]
 # stalk_models=["simple_corn_stalk_early" , "simple_corn_stalk_early", "simple_corn_stalk_late", "simple_corn_stalk_late", "simple_corn_stalk_late", "simple_corn_stalk_late"]
 # stalk_models=["baby_corn_stalk" , "small_corn_stalk", "adult_corn_stalk_variant_0", "adult_corn_stalk_variant_1", "adult_corn_stalk_variant_2", "adult_corn_stalk_variant_3"]
 #stalk_models=["corn_variant_0" , "corn_variant_1", "corn_variant_2", "corn_variant_3", "corn_variant_4", "corn_variant_5"]
 #stalk_models=["corn_variant_2", "corn_variant_3", "corn_variant_4", "corn_variant_5"]
 #stalk_model_season=["early", "early" ,"late","late","late","late"]
-stalk_model_season=["late","late","late"]
+# stalk_model_season=["late","late","late"]
 #stalk_model_heights=[.25, .5, 2, 2, 2, 2.25]
 stalk_model_heights=[2.25, 2.25, 2.25]
 # stalk_model_biodensities = [1, 1, 1, 1, 1, 1]
