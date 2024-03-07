@@ -65,7 +65,7 @@ class RowfollowGt:
 
     
         self.heading_pub.publish(Float32MultiArray(data=[heading]))
-        self.distance_pub.publish(Float32MultiArray(data=[-l2[0]-r2[0]]))
+        self.distance_pub.publish(Float32MultiArray(data=[(-l2[0]-r2[0])/2]))
 
     def row_num_update(self,pos):
         self.row_num = int(-pos.y//self.lane_width)
