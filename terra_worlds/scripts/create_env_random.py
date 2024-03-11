@@ -40,7 +40,7 @@ class EnvCreator:
         self.num_rows = 7
         self.vert_row_len = 5.0  # (m)
         self.hori_row_len = 5.0
-        self.radius = 0.05
+        self.radius = 0.02
         self.stalk_dist = 0.3048
         self.row_dist = 0.76
         self.min_row_len = 4.5  
@@ -56,8 +56,8 @@ class EnvCreator:
         self.sideward_plots = 1
 
         self.robot_init_margin = 0.25  # (m)
-        self.robot_min_init_x = 3.8
-        self.robot_max_init_x = 4.0
+        self.robot_min_init_x = 1
+        self.robot_max_init_x = 1.5
         self.robot_max_init_yaw = 0.174533 * 0.5  # 5 degrees in radians
         self.robot_min_init_yaw = -0.174533 * 0.5
         
@@ -632,18 +632,27 @@ class EnvCreator:
             k = self.vert_row_len  # x-coordinate of the center
 
             # Generate parameter values
+            # t = np.linspace(0, np.pi, 10)
             t = np.linspace(0, np.pi, 10)
 
             # Parametric equations for the ellipse
             y = h + a * np.cos(t)
             x = k + b * np.sin(t)
 
+            # if init_lane < target_lane:
+            #     x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])[::-1]
+            #     y = np.append(np.append([ref_target_y, ref_target_y], y), [ref_init_y, ref_init_y])[::-1]
+            # else:
+            #     x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])
+            #     y = np.append(np.append([ref_init_y, ref_init_y], y), [ref_target_y, ref_target_y])
+
             if init_lane < target_lane:
-                x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])[::-1]
-                y = np.append(np.append([ref_target_y, ref_target_y], y), [ref_init_y, ref_init_y])[::-1]
+                x = np.append(np.append([self.vert_row_len - 3.5,self.vert_row_len - 3,self.vert_row_len - 2.5,self.vert_row_len - 2, self.vert_row_len - 1.5,self.vert_row_len - 1,self.vert_row_len - 0.5], x), [self.vert_row_len - 0.5,self.vert_row_len - 1, self.vert_row_len - 1.5,self.vert_row_len - 2])[::-1]
+                y = np.append(np.append([ref_target_y,ref_target_y,ref_target_y,ref_target_y, ref_target_y,ref_target_y, ref_target_y], y), [ref_init_y, ref_init_y,ref_init_y, ref_init_y])[::-1]
             else:
-                x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])
-                y = np.append(np.append([ref_init_y, ref_init_y], y), [ref_target_y, ref_target_y])
+                x = np.append(np.append([self.vert_row_len - 2, self.vert_row_len - 1.5,self.vert_row_len - 1,self.vert_row_len - 0.5], x), [self.vert_row_len - 0.5,self.vert_row_len - 1, self.vert_row_len - 1.5,self.vert_row_len - 2,self.vert_row_len - 2.5,self.vert_row_len - 3,self.vert_row_len - 3.5])
+                y = np.append(np.append([ref_init_y, ref_init_y,ref_init_y, ref_init_y], y), [ref_target_y, ref_target_y,ref_target_y, ref_target_y,ref_target_y, ref_target_y,ref_target_y])
+
             ref_waypoints = [[x[i], y[i]] for i in range(x.shape[0])]
 
             # self.plot_waypoints(env_idx, i, init_x, init_y, noi_waypoints, ref_waypoints)  # Debug purpose

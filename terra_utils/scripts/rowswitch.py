@@ -22,7 +22,7 @@ def mylogerr(msg=''):
 class RowSwitch:
     def __init__(self, args):
         # Read routes
-        self.env_config_path = rospy.get_param('~env_config_path', "/home/daslab/catkin_row_turning/src/terrasentia_gazebo/terra_worlds/configs/env_0")
+        self.env_config_path = rospy.get_param('~env_config_path', "/home/arun/catkin_ws/src/terrasentia_gazebo/terra_worlds/configs/env_0")
         f = open(f"{self.env_config_path}/routes_config.json")
         self.routes = json.load(f)
 
@@ -52,9 +52,11 @@ class RowSwitch:
         self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
         self.sub_mpc_cmd = rospy.Subscriber("/terrasentia/mpc_cmd_vel", TwistStamped, self.mpc_cmd_callback)
 
+        self.args = args
+
         self.set_robot_state()  # Set robot initial pose
        
-        self.args = args
+        
         if self.args.mode == 'inference':
             self.success = []
             self.pub_noi_goal = rospy.Publisher("/terrasentia/noi_goal", PoseStamped, queue_size=10)
@@ -91,15 +93,18 @@ class RowSwitch:
         twist_stamped.twist.angular.x = msg.twist.angular.x
         twist_stamped.twist.angular.y = msg.twist.angular.y
 
-        if self.args.mode == 'inference':
-            twist_stamped.twist.angular.z = msg.twist.angular.z
-            self.pub_twist.publish(twist_stamped)
-        else:
-            if 2 <= self.nearest_wp_index <= 11: # Adding noise in this interval
-                twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
-            else:
-                twist_stamped.twist.angular.z = msg.twist.angular.z
-            self.pub_twist.publish(twist_stamped)     
+        # if self.args.mode == 'inference':
+        #     twist_stamped.twist.angular.z = msg.twist.angular.z
+        #     self.pub_twist.publish(twist_stamped)
+        # else:
+        #     if 2 <= self.nearest_wp_index <= 11: # Adding noise in this interval
+        #         twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
+        #     else:
+        #         twist_stamped.twist.angular.z = msg.twist.angular.z
+        #     self.pub_twist.publish(twist_stamped)
+        # 
+        twist_stamped.twist.angular.z = msg.twist.angular.z
+        self.pub_twist.publish(twist_stamped)     
         
     def odom_callback(self, msg):
         self.robot_x = msg.pose.pose.position.x
@@ -148,22 +153,26 @@ class RowSwitch:
             else: 
                 threshold = 0.1
                 
-            if (abs(self.robot_x - ref_target_x) < threshold and abs(self.robot_y - ref_target_y) < threshold) or self.nearest_wp_index == 14:
-                # Reach the goal for current route
+            # if (abs(self.robot_x - ref_target_x) < threshold and abs(self.robot_y - ref_target_y) < threshold) or self.nearest_wp_index == 14:
+            #     # Reach the goal for current route
+            #     print('Goal reached!')
+            #     self.final_stage = True
+            #     if self.args.mode == 'inference':
+            #         self.success.append(1)
+        
+            if self.nearest_wp_index==18:
                 print('Goal reached!')
                 self.final_stage = True
                 if self.args.mode == 'inference':
                     self.success.append(1)
+
             else:
                 # Prepare MPC path (noisy and reference)
 
                 # Detremine MPC paths in world frame
                 self.mpc_path_world_noi = noi_route.copy()
-                for i in range(self.nearest_wp_index, len(ref_route)):
-                    # Prepare the reference MPC path with remaining waypoints
-                    if abs(self.robot_x - ref_route[self.nearest_wp_index][0]) < 0.2 and abs(self.robot_y - ref_route[self.nearest_wp_index][1]) < 0.2:
-                        self.nearest_wp_index += 1
-                    self.mpc_path_world_ref = ref_route[self.nearest_wp_index:]
+                self.mpc_path_world_ref = ref_route.copy()
+                
 
                 # Transform MPC paths to body frame
                 self.mpc_path_body_noi = []
@@ -182,6 +191,16 @@ class RowSwitch:
                     rotation_inv = rotation.inv()
                     point_body = rotation_inv.apply(translation)
                     self.mpc_path_body_ref.append([point_body[0], point_body[1]])
+
+                
+                for i in range(self.nearest_wp_index, len(self.mpc_path_body_ref)):
+                    # Prepare the reference MPC path with remaining waypoints
+                    print(self.mpc_path_body_ref[self.nearest_wp_index][0])
+                    print(self.mpc_path_body_ref[self.nearest_wp_index+1][0])
+
+                    if self.mpc_path_body_ref[self.nearest_wp_index][0] < 0:
+                        self.nearest_wp_index += 1
+                    self.mpc_path_body_ref = self.mpc_path_body_ref[self.nearest_wp_index:]
 
                 if self.args.mode == 'inference':
                     pt1 = np.array([self.mpc_path_body_noi[0][0], self.mpc_path_body_noi[0][1], 0.0])
