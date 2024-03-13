@@ -192,15 +192,9 @@ class RowSwitch:
                     point_body = rotation_inv.apply(translation)
                     self.mpc_path_body_ref.append([point_body[0], point_body[1]])
 
-                
-                for i in range(self.nearest_wp_index, len(self.mpc_path_body_ref)):
-                    # Prepare the reference MPC path with remaining waypoints
-                    print(self.mpc_path_body_ref[self.nearest_wp_index][0])
-                    print(self.mpc_path_body_ref[self.nearest_wp_index+1][0])
-
-                    if self.mpc_path_body_ref[self.nearest_wp_index][0] < 0:
-                        self.nearest_wp_index += 1
-                    self.mpc_path_body_ref = self.mpc_path_body_ref[self.nearest_wp_index:]
+                if self.mpc_path_body_ref[self.nearest_wp_index][0] < 0:
+                    self.nearest_wp_index += 1   
+                self.mpc_path_body_ref = self.mpc_path_body_ref[self.nearest_wp_index:]
 
                 if self.args.mode == 'inference':
                     pt1 = np.array([self.mpc_path_body_noi[0][0], self.mpc_path_body_noi[0][1], 0.0])
