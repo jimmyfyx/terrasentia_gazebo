@@ -37,7 +37,8 @@ class EnvCreator:
 
         # Constant parameters
         self.num_variants = 0
-        self.num_rows = 7
+        self.vert_num_rows = 7
+        self.hori_num_rows = 3
         self.vert_row_len = 5.0  # (m)
         self.hori_row_len = 5.0
         self.radius = 0.02
@@ -56,7 +57,7 @@ class EnvCreator:
         self.sideward_plots = 1
 
         self.robot_init_margin = 0.25  # (m)
-        self.robot_min_init_x = 1
+        self.robot_min_init_x = 1.0
         self.robot_max_init_x = 1.5
         self.robot_max_init_yaw = 0.174533 * 0.5  # 5 degrees in radians
         self.robot_min_init_yaw = -0.174533 * 0.5
@@ -74,8 +75,8 @@ class EnvCreator:
     def create_stalk_variants(self):
         for corn_var in range(2, 21):
             self.stalk_models.append(f"corn_variant_{corn_var}")
-        for sorg_var in range(3, 9):
-            self.stalk_models.append(f"sorghum_variant_{sorg_var}")
+        # for sorg_var in range(3, 9):
+        #     self.stalk_models.append(f"sorghum_variant_{sorg_var}")
         for i in range(len(self.stalk_models)):
             self.stalk_model_heights.append(2.25)
             self.stalk_model_biodensities.append(1)
@@ -230,7 +231,7 @@ class EnvCreator:
     def randomize_row_len(self):
         ''' Randomize the length of each row. Currently, min is 4.7 and max is 5.0
         '''
-        for i in range(self.num_rows):
+        for i in range(self.vert_num_rows):
             self.row_lens[i] = random.uniform(self.min_row_len, self.max_row_len)
 
     # ========================================================
@@ -462,7 +463,7 @@ class EnvCreator:
         field_name = f"env_{env_idx}"  # The name of .field output file
 
         num_plots = self.forward_plots * self.sideward_plots  # Always only one plot
-        plot_width = self.row_dist * (self.num_rows - 1)
+        plot_width = self.row_dist * (self.vert_num_rows - 1)
         self.gap_dist = 0.76  # Gap between horizontal and vertical plots (m)
 
         final_xml_str = ""
@@ -480,8 +481,8 @@ class EnvCreator:
         plot_id = index
         stalk_emerg_prob = self.stalk_min_emerg_prob + random.random() * (self.stalk_max_emerg_prob - self.stalk_min_emerg_prob)
         mean_stalk_height = self.stalk_min_height + self.stalk_height_prob * random.random() * (self.stalk_max_height - self.stalk_min_height)
-        mean_centers = self.generate_mean_centers(self.num_rows, int(self.vert_row_len / self.stalk_dist + 1), self.row_dist, self.stalk_dist, [plot_center[0] - plot_width/2, plot_center[1] - self.vert_row_len / 2],
-                                                  int(self.hori_row_len / self.stalk_dist + 1), 3, self.stalk_dist, self.row_dist, [plot_center[0] - plot_width / 2, plot_center[1] - self.vert_row_len / 2 + self.vert_row_len + self.gap_dist])
+        mean_centers = self.generate_mean_centers(self.vert_num_rows, int(self.vert_row_len / self.stalk_dist + 1), self.row_dist, self.stalk_dist, [plot_center[0] - plot_width /2, plot_center[1] - self.vert_row_len / 2],
+                                                  int(self.hori_row_len / self.stalk_dist + 1), self.hori_num_rows, self.stalk_dist, self.row_dist, [plot_center[0] - plot_width / 2, plot_center[1] - self.vert_row_len / 2 + self.vert_row_len + self.gap_dist])
         centers = self.randomize_mean_centers(mean_centers, self.radius)
         poses = self.randomize_poses(centers)
 
@@ -490,9 +491,9 @@ class EnvCreator:
         [xml_str, avg_d, avg_h] = self.load_stalk_info_sdf(field_name, centers,poses, plot_id, stalk_emerg_prob, mean_stalk_height, 0, 5, index == 0, index == (num_plots - 1))
         final_xml_str = final_xml_str + xml_str
 
-        shapefile_str = shapefile_str + str(index) + "\n" + "PLOT" + str(index) + "_NAME" + "\nCORN" + "\nThis plot has candy corn" + "\nROWS\n" + str(self.num_rows) + "\n"
+        shapefile_str = shapefile_str + str(index) + "\n" + "PLOT" + str(index) + "_NAME" + "\nCORN" + "\nThis plot has candy corn" + "\nROWS\n" + str(self.vert_num_rows) + "\n"
 
-        for r in range(0, self.num_rows):
+        for r in range(0, self.vert_num_rows):
             x0 = plot_center[0] - plot_width / 2  + self.row_dist * (r - 1)
             x1 = x0
             y0 = plot_center[1] - self.vert_row_len / 2
@@ -514,7 +515,7 @@ class EnvCreator:
 
         avg_heights.append(avg_h)
         avg_densities.append(avg_d)
-        row_counts.append(self.num_rows)
+        row_counts.append(self.vert_num_rows)
         row_lengths.append(self.vert_row_len)
         row_widths.append(self.row_dist)
 
@@ -596,8 +597,8 @@ class EnvCreator:
             init_lane = 0
             target_lane = 0
             while True:
-                init_lane_ = random.randint(1, self.num_rows - 1)
-                target_lane_ = random.randint(1, self.num_rows - 1)
+                init_lane_ = random.randint(1, self.vert_num_rows - 1)
+                target_lane_ = random.randint(1, self.vert_num_rows - 1)
                 if abs(target_lane_ - init_lane_) <= 3 and abs(target_lane_ - init_lane_) > 1:
                     init_lane = init_lane_
                     target_lane = target_lane_
@@ -627,24 +628,16 @@ class EnvCreator:
     
             # Define ellipse parameters
             a = (abs(target_lane - init_lane) * self.row_dist) / 2  # Semi-major axis
-            b = 0.5  # Semi-minor axis
+            b = 0.4  # Semi-minor axis
             h = ref_init_y + (ref_target_y - ref_init_y) / 2  # y-coordinate of the center
             k = self.vert_row_len  # x-coordinate of the center
 
             # Generate parameter values
-            # t = np.linspace(0, np.pi, 10)
             t = np.linspace(0, np.pi, 10)
 
             # Parametric equations for the ellipse
             y = h + a * np.cos(t)
             x = k + b * np.sin(t)
-
-            # if init_lane < target_lane:
-            #     x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])[::-1]
-            #     y = np.append(np.append([ref_target_y, ref_target_y], y), [ref_init_y, ref_init_y])[::-1]
-            # else:
-            #     x = np.append(np.append([self.vert_row_len - 0.5, self.vert_row_len - 0.25], x), [self.vert_row_len - 0.25, self.vert_row_len - 0.5])
-            #     y = np.append(np.append([ref_init_y, ref_init_y], y), [ref_target_y, ref_target_y])
 
             if init_lane < target_lane:
                 x = np.append(np.append([self.vert_row_len - 3.5,self.vert_row_len - 3,self.vert_row_len - 2.5,self.vert_row_len - 2, self.vert_row_len - 1.5,self.vert_row_len - 1,self.vert_row_len - 0.5], x), [self.vert_row_len - 0.5,self.vert_row_len - 1, self.vert_row_len - 1.5,self.vert_row_len - 2])[::-1]
@@ -652,7 +645,6 @@ class EnvCreator:
             else:
                 x = np.append(np.append([self.vert_row_len - 2, self.vert_row_len - 1.5,self.vert_row_len - 1,self.vert_row_len - 0.5], x), [self.vert_row_len - 0.5,self.vert_row_len - 1, self.vert_row_len - 1.5,self.vert_row_len - 2,self.vert_row_len - 2.5,self.vert_row_len - 3,self.vert_row_len - 3.5])
                 y = np.append(np.append([ref_init_y, ref_init_y,ref_init_y, ref_init_y], y), [ref_target_y, ref_target_y,ref_target_y, ref_target_y,ref_target_y, ref_target_y,ref_target_y])
-
             ref_waypoints = [[x[i], y[i]] for i in range(x.shape[0])]
 
             # self.plot_waypoints(env_idx, i, init_x, init_y, noi_waypoints, ref_waypoints)  # Debug purpose

@@ -156,7 +156,7 @@ class RecordTrajectoryLauncher:
             self.record_process = self._launch_record_data(env_idx=env_idx)  # Launch rowswitch node
             logger.info(f'rowswitch node is launched!')
 
-            time.sleep(30)  # Run simulation
+            time.sleep(300)  # Run simulation
 
             logger.info('Shutting down environment ...')
             self._stop_mpc() # Kill MPC node
