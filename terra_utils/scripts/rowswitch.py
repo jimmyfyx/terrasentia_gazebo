@@ -49,6 +49,8 @@ class RowSwitch:
         self.pub_path_ref = rospy.Publisher("/terrasentia/mpc_path_ref", Path, queue_size=10)
         self.pub_route_id = rospy.Publisher("/terrasentia/route_id", Int8, queue_size=10)
         self.pub_reach_goal = rospy.Publisher("/terrasentia/reach_goal", Int8, queue_size=10)
+        self.pub_init_lane = rospy.Publisher("/terrasentia/route_init_lane", Int8, queue_size=10)
+        self.pub_target_lane = rospy.Publisher("/terrasentia/route_target_lane", Int8, queue_size=10)
         self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
         self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
         self.sub_mpc_cmd = rospy.Subscriber("/terrasentia/mpc_cmd_vel", TwistStamped, self.mpc_cmd_callback)
