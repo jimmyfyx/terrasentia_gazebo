@@ -37,6 +37,7 @@ roslaunch terra_gazebo record_data.launch
     - `env_config_path`: The folder containing configurations for all environments (`.../terra_worlds/configs`)
     - `rosbag_path`: The folder to save rosbags
     - `gazebo_launch_file` and `record_launch_file` should not require changes
+- Modify the simulation duration (`time.sleep()`) for each environment in `start_collection()`. Currently, simulating 25 routes for each environment takes roughly 300 seconds
 - Install the package `coloredlogs` with the command `pip install coloredlogs`
 - Run
 ```
