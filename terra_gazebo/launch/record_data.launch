@@ -2,7 +2,7 @@
 <launch>
     <arg name = "env_config_path" default="/home/jimmy/catkin_ws/src/terra-simulation/terra_worlds/configs/env_0"/>
     <arg name = "rosbag_path" default="/home/jimmy/das_lab/corn_env0.bag"/>
-    <arg name = "main_topics" value="/mpc_node/pts_car /terrasentia/center_zed2/depth/depth_registered /terrasentia/left_zed2/depth/depth_registered /terrasentia/right_zed2/depth/depth_registered /terrasentia/mpc_cmd_vel /terrasentia/mpc_path_ref /terrasentia/mpc_path_noi /terrasentia/motion_command /terrasentia/ground_truth /terrasentia/route_id /terrasentia/reach_goal /tf"/>
+    <arg name = "main_topics" value="/mpc_node/pts_car /terrasentia/center_zed2/depth/depth_registered /terrasentia/left_zed2/depth/depth_registered /terrasentia/right_zed2/depth/depth_registered /terrasentia/mpc_cmd_vel /terrasentia/mpc_path_ref /terrasentia/mpc_path_noi /terrasentia/motion_command /terrasentia/ground_truth /terrasentia/route_id /terrasentia/route_init_lane /terrasentia/route_target_lane /terrasentia/reach_goal /tf"/>
     
     <!-- <node name="mpc" pkg="terra_mpc" type="mpc_node.py" respawn="true">
     </node> -->

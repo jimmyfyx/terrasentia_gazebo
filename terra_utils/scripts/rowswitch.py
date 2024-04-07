@@ -177,6 +177,8 @@ class RowSwitch:
                 ref_target_y = route["ref_target_y"]
                 
                 self.pub_route_id.publish(self.cur_route)  # Publish current route id
+                self.pub_init_lane.publish(init_lane)
+                self.pub_target_lane.publish(target_lane)
 
                 # Different goal reaching conditions for inference and data generating mode
                 # if self.args.mode == 'inference':
