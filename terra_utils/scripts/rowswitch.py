@@ -51,6 +51,7 @@ class RowSwitch:
         self.pub_reach_goal = rospy.Publisher("/terrasentia/reach_goal", Int8, queue_size=10)
         self.pub_init_lane = rospy.Publisher("/terrasentia/route_init_lane", Int8, queue_size=10)
         self.pub_target_lane = rospy.Publisher("/terrasentia/route_target_lane", Int8, queue_size=10)
+        self.pub_lane_skip = rospy.Publisher("/terrasentia/lane_skip", Int8, queue_size=10)
         self.pub_twist = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
         self.sub_odom = rospy.Subscriber("/terrasentia/ground_truth", Odometry, self.odom_callback)
         self.sub_mpc_cmd = rospy.Subscriber("/terrasentia/mpc_cmd_vel", TwistStamped, self.mpc_cmd_callback)
@@ -120,7 +121,7 @@ class RowSwitch:
         #         twist_stamped.twist.angular.z = msg.twist.angular.z
         #     self.pub_twist.publish(twist_stamped)   
 
-        # if 2 <= self.nearest_wp_index <= 11: # Adding noise in this interval
+        # if 0 <= self.nearest_wp_index <= 17: # Adding noise in this interval
         #     twist_stamped.twist.angular.z = np.clip(msg.twist.angular.z + 20.0 * (np.random.rand() - 0.5), -6.0, 6.0)
         # else:
         #     twist_stamped.twist.angular.z = msg.twist.angular.z
@@ -179,6 +180,7 @@ class RowSwitch:
                 self.pub_route_id.publish(self.cur_route)  # Publish current route id
                 self.pub_init_lane.publish(init_lane)
                 self.pub_target_lane.publish(target_lane)
+                self.pub_lane_skip.publish(abs(target_lane - init_lane) - 1)
 
                 # Different goal reaching conditions for inference and data generating mode
                 # if self.args.mode == 'inference':
