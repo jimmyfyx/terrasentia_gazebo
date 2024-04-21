@@ -102,7 +102,7 @@ class RecordTrajectoryLauncher:
             preexec_fn=os.setsid
         )
 
-    def _launch_record_data(self, env_idx: int):
+    def _launch_record_data(self, env_idx: int, stalk_type: str):
         '''
         Launch the rowswitch node (record_data.launch)
         '''
@@ -110,7 +110,7 @@ class RecordTrajectoryLauncher:
 
         source_command = self._sourced_command()
         env_config_path = self.env_config_path + f'/env_{env_idx}'
-        rosbag_path = self.rosbag_path + f'/corn_env{env_idx}.bag'
+        rosbag_path = self.rosbag_path + f'/{stalk_type}_env{env_idx}.bag'
         launch_command = source_command + f' && roslaunch terra_gazebo {self.record_launch_file} env_config_path:={env_config_path} rosbag_path:={rosbag_path}'
 
         return subprocess.Popen(
@@ -143,7 +143,7 @@ class RecordTrajectoryLauncher:
         logger.info('rowswitch node is shutted down!')
         self.record_process = None
 
-    async def start_collection(self, env_start_idx: int, env_end_idx: int):
+    async def start_collection(self, env_start_idx: int, env_end_idx: int, stalk_type: str):
         for env_idx in range(env_start_idx, env_end_idx + 1, 1):
             self._change_world_sdf(env_idx=env_idx)  # Update environment world file
             logger.info(f'Launching environment ...')
@@ -153,10 +153,10 @@ class RecordTrajectoryLauncher:
             self.mpc_process = self._launch_mpc()  # Launch MPC node
             time.sleep(5)
             logger.info(f'MPC node is launched!')
-            self.record_process = self._launch_record_data(env_idx=env_idx)  # Launch rowswitch node
+            self.record_process = self._launch_record_data(env_idx=env_idx, stalk_type=stalk_type)  # Launch rowswitch node
             logger.info(f'rowswitch node is launched!')
 
-            time.sleep(300)  # Run simulation
+            time.sleep(120)  # Run simulation
 
             logger.info('Shutting down environment ...')
             self._stop_mpc() # Kill MPC node
@@ -174,9 +174,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--env_start_idx', type=int, default=0, help='Index of environment to start collecting data')
     parser.add_argument('--env_end_idx', type=int, default=0, help='Index of environment when stop collecting data')
+    parser.add_argument("--type", type=str, default='corn', help="Type of stalk: corn or sorghum")
     args = parser.parse_args()
 
     launcher = RecordTrajectoryLauncher()
 
-    asyncio.run(launcher.start_collection(args.env_start_idx, args.env_end_idx))
+    asyncio.run(launcher.start_collection(args.env_start_idx, args.env_end_idx, args.type))
     logging.shutdown()
