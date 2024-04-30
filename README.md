@@ -10,16 +10,22 @@
 - `/terra_worlds/models/model.config` An additionl `model.config` used when generating random environements.
 
 ## `create_env_random.py`
-With specified `num_envs` and `num_routes`, the script can generate random environments in `.sdf`. Each environment is saved in 
+With specified `num_envs`, `num_routes`, and `type` (corn or sorghum) the script can generate random environments in `.sdf`. Each environment is saved in 
 `env_{env_idx}` in `/terra_worlds/models`. Meanwhile, it can generate config file for routes information in `/terra_worlds/configs/env_{env_idx}`.
 
+The environment is set up to include 6 rows. From a random starting row, routes are specified so that the robot can either turn left or right by skipping 1 or 2 rows. 
+
+## `create_env_random_v2.py`
+Similar to `create_env_random.py`, the environment is set up to include 6 rows. However, from a random starting row, the robot can only turn left by skipping 1 or 2 rows. 
+
 ## `rowswitch.py`
-This is a ROS node that is used to publish real-time MPC paths based on current robot position and routes information in `/terra_worlds/configs/env_{env_idx}`.
+This is a ROS node that is used to publish real-time MPC paths based on current robot position (from gazebo) and routes information in `/terra_worlds/configs/env_{env_idx}`.
 
 ## Record rosbag files (Manually)
-- Create the environment with `create_env_random.py`
+- Create the environment with `create_env_random.py` or `create_env_random_v2.py`
 - Specify the environment in `farm.world` and `record_data.launch`
 - Specify the rosbag and environment config path in `record_data.launch`
+- Add any rostopics to record in `record_data.launch`
 - Run
 ```
 roslaunch terra_gazebo demo_world.launch
@@ -29,7 +35,7 @@ roslaunch terra_gazebo record_data.launch
 
 ## Record rosbag files (Automatically)
 - Place `record_data.py` with the other `terra_xxx` folders in the same directory
-- Create the environments with `create_env_random.py`
+- Create the environments with `create_env_random.py` or `create_env_random_v2.py`
 - Specify the paths in the initialization of `RecordTrajectoryLauncher` of `record_data.py`
     - `devel_dir`: The path of the `devel` folder in ROS workspace
     - `mpc_path`: The folder containing the `mpc_node.py` script
@@ -38,10 +44,12 @@ roslaunch terra_gazebo record_data.launch
     - `rosbag_path`: The folder to save rosbags
     - `gazebo_launch_file` and `record_launch_file` should not require changes
 - Modify the simulation duration (`time.sleep()`) for each environment in `start_collection()`. Currently, simulating 25 routes for each environment takes roughly 300 seconds
+- Add any rostopics to record in `record_data.launch`
 - Install the package `coloredlogs` with the command `pip install coloredlogs`
+- Specify the starting environment, ending environment, and stalk type using arguments
 - Run
 ```
-python3 record_data.py [args: env_start_idx, env_end_idx]
+python3 record_data.py [args: env_start_idx, env_end_idx, type]
 ```
 
 ## Customize terrain
