@@ -72,11 +72,13 @@ class EnvCreator:
         self.routes_json = {}
         self.env_config = {}
     
-    def create_stalk_variants(self):
-        for corn_var in range(2, 21):
-            self.stalk_models.append(f"corn_variant_{corn_var}")
-        # for sorg_var in range(3, 9):
-        #     self.stalk_models.append(f"sorghum_variant_{sorg_var}")
+    def create_stalk_variants(self, stalk_type):
+        if stalk_type == 'corn':
+            for corn_var in range(2, 21):
+                self.stalk_models.append(f"corn_variant_{corn_var}")
+        elif stalk_type == 'sorghum':
+            for sorg_var in range(3, 9):
+                self.stalk_models.append(f"sorghum_variant_{sorg_var}")
         for i in range(len(self.stalk_models)):
             self.stalk_model_heights.append(2.25)
             self.stalk_model_biodensities.append(1)
@@ -679,12 +681,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_env", type=int, default=1, help="Total number of environments to generate")
     parser.add_argument("--num_routes", type=int, default=1, help="Number of routes in one environment")
+    parser.add_argument("--type", type=str, default='corn', help="Type of stalk: corn or sorghum")
     args = vars(parser.parse_args())
     num_env = args["num_env"]
     num_routes = args["num_routes"]
+    stalk_type = args["type"]
 
     env_creator = EnvCreator()
-    env_creator.create_stalk_variants()  # Specify stalk varaints to choose from
+    env_creator.create_stalk_variants(stalk_type)  # Specify stalk varaints to choose from
 
     for env_idx in range(num_env):
         env_creator.create_env(env_idx)
