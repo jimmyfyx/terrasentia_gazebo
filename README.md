@@ -52,6 +52,20 @@ roslaunch terra_gazebo record_data.launch
 python3 record_data.py [args: env_start_idx, env_end_idx, type]
 ```
 
+## Additional notes on running Gazebo
+### GPU access
+If the computer has an NVIDIA GPU with corresponding drivers installed, Gazebo can run with GPU by adding the following lines to the beginning of `/terra_gazebo/launch/demo_word.launch`:
+```
+<env name="__NV_PRIME_RENDER_OFFLOAD" value="1"/>
+<env name="__GLX_VENDOR_LIBRARY_NAME" value="nvidia"/>
+```
+### Headless mode
+While recording data manually or automatically, Gazebo can run in headless mode to speed up simulation time. For headless mode, in 
+`/terra_gazebo/launch/demo_word.launch`, modify the default value of the argument `gui` to `false`:
+```
+<arg name="gui" default="false"/>
+```
+
 ## Customize terrain
 ### Example terrain
 - Download the heightmap model: https://drive.google.com/drive/folders/1KaRjKiA6zuJBjkgqsXdxFpO_XuU7Z07H?usp=sharing
