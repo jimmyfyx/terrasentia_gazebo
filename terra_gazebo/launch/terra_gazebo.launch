@@ -9,7 +9,7 @@
 	<arg name="model_name" default="terrasentia"/>
 
 	<arg name="paused" default="false"/>
-	<arg name="gui" default="true"/>
+	<arg name="gui" default="false"/>
 	<arg name="debug" default="false"/>
 	<arg name="verbose" default="false"/>
 
@@ -26,7 +26,5 @@
      </include>
 
      <include file="$(find terra_gazebo)/launch/spawn_robot.launch" pass_all_args="true"/>
-
-     
      
 </launch>

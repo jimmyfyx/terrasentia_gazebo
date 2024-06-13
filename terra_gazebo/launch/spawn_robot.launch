@@ -25,9 +25,10 @@
 		<node pkg="tf" type="static_transform_publisher" name="zed2baselink" args="0.156 0 0.283 0 0 0 $(arg ekf_frame_id) zed2_camera_center 10" />
 		<node pkg="tf" type="static_transform_publisher" name="grid2robot" args="0 0 0 0 0 0 1 $(arg ekf_frame_id) grid 10" />
 		<node pkg="tf" type="static_transform_publisher" name="zedlaser2baselink" args="0.156 0 0.283 0 0 0 $(arg ekf_frame_id) camera_depth_frame 10" />
-
 		<node pkg="terra_utils" type="rowfollow_gt.py" name="heading_distance_gt" output="log"></node>
 		<node pkg="terra_utils" type="perception_node_kp.py" name="keypoint_prediction" output="log"></node>
+		<node name="reference_generator" pkg="terra_mpc" type="reference_path_publisher.py" output="screen" launch-prefix="python3"/>
+     	<node name="mpc_controller" pkg="terra_mpc" type="mpc_node.py" output="screen" launch-prefix="python3"/>
 
 
 	</group>
