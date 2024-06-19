@@ -28,7 +28,8 @@ from trajectory_utils2 import*
 
 
 #stalk_models=["sorghum_variant_6" , "sorghum_variant_7", "sorghum_variant_8"]
-stalk_models = ["tobacco_variant_8","tobacco_variant_8","tobacco_variant_8"]
+# stalk_models = ["corn_variant_8","corn_variant_8","corn_variant_8"]
+stalk_models = ["sorghum_variant_8","sorghum_variant_8","sorghum_variant_8"]
 # stalk_models=["simple_corn_stalk_early" , "simple_corn_stalk_early", "simple_corn_stalk_late", "simple_corn_stalk_late", "simple_corn_stalk_late", "simple_corn_stalk_late"]
 # stalk_models=["baby_corn_stalk" , "small_corn_stalk", "adult_corn_stalk_variant_0", "adult_corn_stalk_variant_1", "adult_corn_stalk_variant_2", "adult_corn_stalk_variant_3"]
 #stalk_models=["corn_variant_0" , "corn_variant_1", "corn_variant_2", "corn_variant_3", "corn_variant_4", "corn_variant_5"]
@@ -416,7 +417,7 @@ def load_stalk_info_sdf(type_t, centers, poses, plotID, stalkEmergenceP, meanSta
 def main():
     # Setup commandline argument(s) structures
     ap = argparse.ArgumentParser(description='Extract images from a video file.')
-    ap.add_argument("--radius", "-r",           type=float, default='0.1', help="Radius of the bounding circle with which to pull random samples from")
+    ap.add_argument("--radius", "-r",           type=float, default='0.01', help="Radius of the bounding circle with which to pull random samples from")
     ap.add_argument("--rows", "-n",             type=int,   default='4', help="Number of rows in each plot to simulate")
     ap.add_argument("--length", "-m",           type=float,   default='10', help="Length of each plot")
     ap.add_argument("--stalk-max-emergence-p", "-s1",    type=float, default='1', help="Max probability of stalk emergence in plot")
@@ -428,14 +429,14 @@ def main():
     ap.add_argument("--stalk-max-model-p", "-s7",    type=float, default='5', help="Max model mean of stalk in plot")
     ap.add_argument("--row-spacing", "-S1",      type=float, default='0.76', help="Spacing between each row")
     ap.add_argument("--stalk-spacing", "-S2",    type=float, default='0.3048', help="Spacing between each stalk within a row")
-    ap.add_argument("--forward-plots", "-S3",    type=int, default='2', help="number of plots in forward dimension") # number of plots in forward dimension
-    ap.add_argument("--sideward-plots", "-S4",    type=int, default='2', help="number of plots in cross-range dimension") # number of plots in cross-range dimension
+    ap.add_argument("--forward-plots", "-S3",    type=int, default='1', help="number of plots in forward dimension") # number of plots in forward dimension
+    ap.add_argument("--sideward-plots", "-S4",    type=int, default='1', help="number of plots in cross-range dimension") # number of plots in cross-range dimension
     ap.add_argument("--forward-plot-separation", "-S5",    type=float, default='1', help="plot separation in forward dimension") # plot separation in forward dimension
     ap.add_argument("--sideward-plot-separation", "-S6",    type=float, default='0.76', help="plot separation in cross-range dimension") # plot separation in cross-range dimension
     ap.add_argument("--origin", "-O", nargs='+',type=float, default=[0,0], help="xy origin ")
     ap.add_argument("--gps-origin", "-gO", nargs='+',type=float, default=[40.123456789,-81.123456789], help="lat lon origin")
-    ap.add_argument("--output", "-o",           type=str,   default="generated_crop_plot_field", help="Name of output file containing randomized stalk centers")#generated_crop_plot_field(.urdf.xacro)
-    ap.add_argument("--name", "-name",           type=str,   default="generated_crop_plot_field", help="Name of output field file")#generated_crop_plot_field(.field)
+    ap.add_argument("--output", "-o",           type=str,   default="model", help="Name of output file containing randomized stalk centers")#generated_crop_plot_field(.urdf.xacro)
+    ap.add_argument("--name", "-name",           type=str,   default="model", help="Name of output field file")#generated_crop_plot_field(.field)
     # Store parsed arguments into array of variables
     args = vars(ap.parse_args())
 

@@ -109,12 +109,16 @@ class Perception:
         # Output image topics
         keypoint_heatmap_topic = '/terrasentia/vision/keypoint_heatmap'
         self.keypoint_heatmap_pub = rospy.Publisher(keypoint_heatmap_topic,Float32MultiArray, queue_size=1)
+
+        keypoint_heatmap_norm_topic = '/terrasentia/vision/keypoint_heatmap_normalized/compressed'
+        self.keypoint_heatmap_norm_pub = rospy.Publisher(keypoint_heatmap_norm_topic,CompressedImage, queue_size=1)
       
         keypoint_vis_heatmap_topic = '/terrasentia/vision/keypoint_vis_heatmap/compressed'
         self.keypoint_vis_heatmap_pub = rospy.Publisher(keypoint_vis_heatmap_topic,CompressedImage, queue_size=1)
 
         keypoint_vis_argmax_topic = '/terrasentia/vision/keypoint_vis_argmax/compressed'
         self.keypoint_vis_argmax_pub = rospy.Publisher(keypoint_vis_argmax_topic,CompressedImage, queue_size=1)
+
 
     def Image_processing(self,ros_data):
 
@@ -176,10 +180,18 @@ class Perception:
 
         pred_vis = 0.5*cv2.cvtColor(image, cv2.COLOR_BGR2RGB)+0.5*(cv2.resize(self.normalize(pred),image.shape[:2][::-1])*255)
 
+        keypoint_heatmap_norm_msg = CompressedImage()
+        keypoint_heatmap_norm_msg.header.stamp = rospy.Time.now()
+        keypoint_heatmap_norm_msg.format = "jpeg"
+        keypoint_heatmap_norm_msg.data = np.array(cv2.imencode('.jpg', cv2.resize(self.normalize(pred),image.shape[:2][::-1])*255)[1]).tobytes()
+        self.keypoint_heatmap_norm_pub.publish(keypoint_heatmap_norm_msg)
+
+
         keypoint_vis_heatmap_msg = CompressedImage()
         keypoint_vis_heatmap_msg.header.stamp = rospy.Time.now()
         keypoint_vis_heatmap_msg.format = "jpeg"
         keypoint_vis_heatmap_msg.data = np.array(cv2.imencode('.jpg', pred_vis)[1]).tobytes()
+
         
         self.keypoint_vis_heatmap_pub.publish(keypoint_vis_heatmap_msg)
 

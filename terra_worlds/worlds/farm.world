@@ -40,12 +40,12 @@
           </scene>
 
           <include>
-               <uri>model://heightmap_flat</uri>
+               <uri>model://heightmap_cornfield</uri>
                <name>height_map</name>
           </include>
 
           <include>
-               <uri>model://corn_plot_18</uri>
+               <uri>model://corn_plot_8</uri>
                <name>plot</name>
                <pose>0 0.76 0 0 0 -1.5708</pose>
 
