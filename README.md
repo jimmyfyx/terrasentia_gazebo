@@ -52,6 +52,31 @@ roslaunch terra_gazebo record_data.launch
 python3 record_data.py [args: env_start_idx, env_end_idx, type]
 ```
 
+## Use PS4 controller to control the robot
+- Clone the package repo (https://github.com/ros-teleop/teleop_twist_joy) to the `/src` folder in the workspace
+- `catkin_make` the workspace
+- Install the `ros-noetic-joy` package by running
+```
+sudo apt install ros-noetic-joy
+```
+Source the ROS `setup.bash` file
+```
+source /opt/ros/noetic/setup.bash
+```
+Verify the installation by checking the package installed path
+```
+rospack find joy
+```
+- Within `/src/teleop_twist_joy/config/ps3.config.yaml`, modify `scaler_linear` and `scaler_linear_turbo` to smaller values so the robot is less sensitive to joystick feedback
+- Place `twist_repeater.py` in the workspace. It's used to convert `Twist` topic from the controller to `TwistStamped` topic subscribed by Gazebo
+- Connect the controller and run
+```
+roslaunch terra_gazebo demo_world.launch
+roslaunch teleop_twist_joy teleop.launch
+python3 twist_repeater.py
+```
+- Hold the central button of the controller and use the left thumb stick to control the robot
+
 ## Additional notes on running Gazebo
 ### GPU access
 If the computer has an NVIDIA GPU with corresponding drivers installed, Gazebo can run with GPU by adding the following lines to the beginning of `/terra_gazebo/launch/demo_word.launch`:
