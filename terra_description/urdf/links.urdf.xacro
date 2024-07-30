@@ -1,0 +1,317 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <xacro:include filename="$(find terra_description)/urdf/materials.urdf.xacro"/>
+     <xacro:include filename="$(find terra_description)/urdf/macros.urdf.xacro"/>
+     <!-- ====================================================
+                           Chassis
+     ========================================================= -->
+	<xacro:macro name="base_footprint" params="parent child">
+		<link name="${parent}">
+			<visual>
+				<origin rpy="0 0 -1.570796" xyz="0 0 0"/>
+				<!-- <geometry>
+					<sphere radius="0.005"/>
+				</geometry>
+				<xacro:color_material color="red"/> -->
+			</visual>
+		</link>
+
+		<joint name="base_footprint_joint" type="fixed">
+			<origin rpy="0 0 0" xyz="0 0 0"/>
+			<parent link="${parent}"/>
+			<child link="${child}"/>
+		</joint>
+	</xacro:macro>
+
+    <xacro:macro name="chassis" params="name stl_chassis color simplified=false">
+		<link name="${name}">
+			<inertial>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<mass value="10.6151" />
+				<inertia ixx="0.08207" 
+				ixy="-7.7911E-07" 
+				ixz="-0.00028623" 
+				iyy="0.1281" 
+				iyz="-4.428E-07" 
+				izz="0.19394" />
+			</inertial>
+
+			<visual>
+				<origin xyz="-0.264 -0.412 -0.078" rpy="1.570796 0 1.570796" />
+				<geometry>
+					<mesh filename="${stl_chassis}" scale="0.001 0.001 0.001"/>
+				</geometry>
+				<xacro:color_material color="${color}"/>
+			</visual>
+
+			<collision>
+				<origin xyz="0.0 0.0 0.18" rpy="0 0 0" />
+				<geometry>
+					<box size="0.48 0.26 0.10"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<xacro:add_friction_gazebo parent="${name}" mu1="1.0" mu2="1.0" fdir1="0 0 0" />
+		<xacro:color_gazebo parent="${name}" color="${color}"/>
+    </xacro:macro>
+
+	<!-- ====================================================
+                           Leg Links
+     ========================================================= -->
+	<!-- <xacro:macro name="leg" params="parent prefix suffix stl min max damping stiffness spring_reference reflect color *origin_inertial simplified=false verbose=true" > -->
+	<xacro:macro name="leg" params="parent prefix suffix stl min max reflect color *origin_inertial simplified=false verbose=true" >
+		<link name="${prefix}_${suffix}_leg_link">
+			<inertial>
+				<xacro:if value="${suffix == 'right'}">
+					<xacro:if value="${prefix == 'rear'}">
+						<origin xyz="-0.0584276700221274 -0.0147684325291646 6.36857233615729E-12" rpy="0 0 0" />
+					</xacro:if>
+					<xacro:unless value="${prefix == 'rear'}">
+						<origin xyz="-0.0584276700221035 -0.0147684325290622 6.36793395791813E-12" rpy="0 0 0" />
+					</xacro:unless>
+				</xacro:if>
+				<xacro:unless value="${suffix == 'right'}">
+					<xacro:if value="${prefix == 'rear'}">
+						<origin xyz="-0.0584276700221132 -0.0147684325291032 6.36846131385482E-12" rpy="0 0 0" />
+					</xacro:if>
+					<xacro:unless value="${prefix == 'rear'}">
+						<origin xyz="-0.058428 -0.014768 6.3642E-12" rpy="0 0 0" />
+					</xacro:unless>
+				</xacro:unless>
+
+				<mass value="0.18656" />
+				<inertia
+					ixx="1.4694E-04" ixy="0" ixz="0" iyy="5.5427E-04" iyz="0" izz="5.6236E-04" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="${stl}" />
+				</geometry>
+			</visual>
+		</link>
+
+		<joint name="${prefix}_${suffix}_leg_joint" type="revolute">
+			<xacro:if value="${suffix == 'right'}">
+				<axis xyz="0 1 0" />
+				<xacro:if value="${prefix == 'rear'}">
+					<origin xyz="-0.030333 -0.067773 0.035877" rpy="0 -0.2 0" />
+				</xacro:if>
+				<xacro:unless value="${prefix == 'rear'}">
+					<origin xyz="0.030739 -0.067773 0.035877" rpy="3.14159 -0.2 -3.14159" />
+				</xacro:unless>
+			</xacro:if>
+			<xacro:unless value="${suffix == 'right'}">
+				<axis xyz="0 -1 0" />
+				<xacro:if value="${prefix == 'rear'}">
+						<origin xyz="-0.030287 0.067773 0.035877" rpy="3.14159 -0.2 0" />
+				</xacro:if>
+				<xacro:unless value="${prefix == 'rear'}">
+					<origin xyz="0.030699 0.067773 0.035877" rpy="0 -0.2 3.14159" />
+				</xacro:unless>
+			</xacro:unless>
+
+			<parent link="${parent}" />
+			<child link="${prefix}_${suffix}_leg_link" />
+			<limit effort="10" velocity="10" lower="${min}" upper="${max}" />
+			<!-- <dynamics damping="${damping}" spring_stiffness="${stiffness}" spring_reference="${spring_reference}" /> -->
+		</joint>
+
+		<!-- <gazebo>
+			<plugin name="spring_plugin_${prefix}_${suffix}" filename="libTorsionalSpringPlugin.so" >
+				<joint_handle>${prefix}_${suffix}_leg_joint</joint_handle>
+				<spring_stiffness>${stiffness}</spring_stiffness>
+				<spring_damping>${damping}</spring_damping>
+				<spring_reference>${spring_reference}</spring_reference>
+				<verbose>${verbose}</verbose>
+			</plugin>
+		</gazebo>           -->
+
+		<xacro:color_gazebo parent="${prefix}_${suffix}_leg_link" color="${color}"/>
+
+	</xacro:macro>
+
+	<!-- ====================================================
+                           Wheel Links
+     ========================================================= -->
+	<xacro:macro name="wheel" params="parent prefix suffix stl stl_collision reflect color friction simplified=false scale=1">
+		<link name="${prefix}_${suffix}_wheel_link">
+			<inertial>
+				<xacro:if value="${suffix == 'right'}">
+				<xacro:if value="${prefix == 'rear'}">
+					<origin xyz="-2.06928196799794E-09 -0.0299032533360765 -5.78422354458041E-09" rpy="0 0 0" />
+				</xacro:if>
+				<xacro:unless value="${prefix == 'rear'}">
+					<origin xyz="-1.35639049991809E-09 -0.0299032533307141 -3.57094759317889E-09" rpy="0 0 0" />
+				</xacro:unless>
+			</xacro:if>
+			<xacro:unless value="${suffix == 'right'}">
+				<xacro:if value="${prefix == 'rear'}">
+					<origin xyz="-2.10804165790002E-10 -0.0299032533481438 -5.84597248387553E-09" rpy="0 0 0" />
+				</xacro:if>
+				<xacro:unless value="${prefix == 'rear'}">
+					<origin xyz="-9.1333E-10 -0.029903 -5.0205E-09" rpy="0 0 0" />
+				</xacro:unless>
+			</xacro:unless>
+
+			<mass value="1.0028" />
+			<inertia
+				ixx="3.2757E-03"
+				ixy="0"
+				ixz="0"
+				iyy="4.2757E-03"
+				iyz="0"
+				izz="3.2757E-03" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="${stl}" />
+				</geometry>
+				<xacro:color_material color="${color}"/>
+			</visual>
+
+			<!-- <collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="${stl_collision}" />
+				</geometry>
+			</collision> -->
+
+			<collision>
+				<origin xyz="0 -0.03 0" rpy="1.570796 0 0" />
+				<geometry>
+					<cylinder radius="0.09" length="0.05"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="${prefix}_${suffix}_wheel_joint" type="continuous">
+			<xacro:if value="${suffix == 'right'}">
+				<axis xyz="0 1 0" />
+				<xacro:if value="${prefix == 'rear'}">
+					<origin xyz="-0.115 -0.0318 0" rpy="-3.1416 -1.1043E-10 -3.1416" />
+				</xacro:if>
+				<xacro:unless value="${prefix == 'rear'}">
+					<origin xyz="-0.115 -0.0318 0" rpy="3.1416 -1.1043E-10 -3.1416" />
+				</xacro:unless>
+			</xacro:if>
+			<xacro:unless value="${suffix == 'right'}">
+				<axis xyz="0 -1 0" />
+				<xacro:if value="${prefix == 'rear'}">
+					<origin xyz="-0.115 -0.0318 0" rpy="-1.5876E-15 0.80628 -3.206E-15" />
+				</xacro:if>
+				<xacro:unless value="${prefix == 'rear'}">
+					<origin xyz="-0.115 -0.0318 0" rpy="-3.1416 -1.1043E-10 -3.1416" />
+				</xacro:unless>
+			</xacro:unless>
+
+			<parent link="${prefix}_${suffix}_leg_link" />
+			<child link="${prefix}_${suffix}_wheel_link" />
+		</joint>
+
+		<!-- <xacro:add_friction_gazebo parent="${prefix}_${suffix}_wheel_link" mu1="${friction}" mu2="${friction}" fdir1="0 0 0" /> -->
+		<xacro:color_gazebo parent="${prefix}_${suffix}_wheel_link" color="${color}"/>
+
+	</xacro:macro>
+
+	<!-- ====================================================
+				Front Camera Gimbal Assembly
+	========================================================= -->
+	<xacro:macro name="front_camera_gimbal_assembly" params="parent" >
+		<link name="front_camera_gimbal_link">
+			<inertial>
+				<origin xyz="0.01014 -0.01943 0.0035" rpy="0 0 0" />
+				<mass value="0.006" />
+				<inertia
+					ixx="0.000001"
+					ixy="0.0"
+					ixz="0.0"
+					iyy="0.000001"
+					iyz="0.0"
+					izz="0.000001" />
+				</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 ${-1.26059+1.5708} 0" />
+				<geometry>
+					<mesh filename="package://terra_description/models/front_camera_gimbal_link.STL" />
+				</geometry>
+				<material name="">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+				</material>
+			</visual>
+			<!-- <collision>
+				<origin xyz="0 ${-0.02389} 0" rpy="0 0 0" />
+				<geometry>
+					<box size="${0.02828*2} ${0.02389*2} ${0.02828*2}"/>
+				</geometry>
+			</collision> -->
+		</link>
+
+		<joint name="front_camera_gimbal_joint" type="revolute">
+			<origin xyz="0.0264 -0.24222 0.10914" rpy="0 0 -1.5708" />
+			<parent link="${parent}" />
+			<child link="front_camera_gimbal_link" />
+			<axis xyz="0 1 0" />
+			<limit lower="-1.74533" upper="1.74533" effort="10000" velocity="10000" />
+			<dynamics damping="0"/>
+		</joint>
+
+		<xacro:sensor_imu_terra name="front_gimbal_imu" parent="front_camera_gimbal_link" color="red"
+			update_rate="100.0"
+			noise="0.005"
+			yaw_offset="0.0"
+			yaw_drift="0.02"
+			yaw_noise="0.01"
+			rate_offset="0.0 0.0 0.0"
+			rate_drift="0.002 0.002 0.002"
+			rate_noise="0.001 0.001 0.001"
+			accel_offset="0.0 0.0 0.0"
+			accel_drift="0.005 0.005 0.005"
+			accel_noise="0.005 0.005 0.005">
+			<origin xyz="0 -0.028 0.002" rpy="0 1.5708 0"/>
+		</xacro:sensor_imu_terra>
+
+		<xacro:sensor_elp_usb_cam name="camera" parent="front_camera_gimbal_link" color="purple">
+			<origin xyz="0.025 -0.028 0.002" rpy="0 0 0"/>
+		</xacro:sensor_elp_usb_cam>
+
+		<gazebo>
+			<plugin name="front_gimbal_controller" filename="libCameraGimbalPlugin.so">
+			<!-- ROS-specific Parameters -->
+			<robotNamespace></robotNamespace>
+				<jointHandle>front_camera_gimbal_joint</jointHandle>
+				<gimbalSpeedTopic>cmd_vel</gimbalSpeedTopic>
+				<targetAngleParamName>/front_gimbal_target</targetAngleParamName>
+				<imuTopic>front_gimbal_imu</imuTopic>
+				<useImuAxis>4</useImuAxis>
+			<!-- PID-Specific Parameters -->
+			<updateRate>100.0</updateRate>
+				<imuDegreeOffset>-180.0</imuDegreeOffset>
+			<defaultTargetAngle>45.0</defaultTargetAngle>
+				<kP>1.25</kP>
+				<kI>0.0</kI>
+				<kD>0.0</kD>
+			<!-- Max/Min Limits -->
+			<maxJointAngle>180.0</maxJointAngle>
+			<minJointAngle>-180.0</minJointAngle>
+			<maxCommandSignal>20</maxCommandSignal>
+			<minCommandSignal>-20</minCommandSignal>
+			<maxIntegralErr>1.0</maxIntegralErr>
+			<minIntegralErr>-1.0</minIntegralErr>
+			<!-- Miscellaneous Parameters -->
+			<controlGain>2.0</controlGain>
+			<torque>5</torque>
+			<!-- Flags -->
+				<verbose>true</verbose>
+				<useOffset>true</useOffset>
+			<flipControlDirection>false</flipControlDirection>
+			<flipJointAngleDirection>true</flipJointAngleDirection>
+			</plugin>
+		</gazebo>
+	</xacro:macro>
+</robot>

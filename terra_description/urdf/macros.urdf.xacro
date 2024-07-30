@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- ====================================================
+					Misc Macros for Testing
+	========================================================= -->
+
+	<!-- Friction Defining Method 1  -->
+	<xacro:macro name="add_friction_urdf" params="mu1 mu2 slip1 slip2 fdir1">
+		<surface>
+			<friction>
+				<ode>
+					<mu>${mu1}</mu>
+					<mu2>${mu2}</mu2>
+					<slip1>${slip1}</slip1>
+					<slip2>${slip2}</slip2>
+					<fdir1>${fdir1}</fdir1>
+				</ode>
+			</friction>
+		</surface>
+	</xacro:macro>
+
+	<!-- Friction Defining Method 2 -->
+	<xacro:macro name="add_friction_gazebo" params="parent mu1 mu2 fdir1">
+		<gazebo reference="${parent}">
+			<mu1 value="${mu1}" />
+			<mu2 value="${mu2}" />
+			<fdir1 value="${fdir1}"/>
+			<maxVel value="100.0" />
+			<kp value="1000000.0"/>
+			<kd value="100.0"/>
+		</gazebo>
+	</xacro:macro>
+
+	<!-- Code to test the modification of visual properties of elements potentially useful for creating accurate model visuals for simulated camera's perception, found as a by-product from browsing various forums for a different issue.
+		Reference URL: https://github.com/tsbertalan/gunnar/blob/94fb53264f7a6028a8c2176f8ef0350a6fea9cd1/description/gunnar.urdf.xacro -->
+	<xacro:macro name="test_visuals" params="name">
+		<material name="${name}">
+			<ambient>.5 .5 .5 1</ambient>
+			<diffuse>0 0 0 1</diffuse>
+			<specular>0.1 0.1 0.1 1</specular>
+			<emissive>0 0 0 0</emissive>
+		</material>
+	</xacro:macro>
+
+	<!-- Code reference for a potentially better configuring of skid steering plugin used for bot control, found as a by-product from browsing various forums for a different issue.
+		Reference URL: https://github.com/tsbertalan/gunnar/blob/94fb53264f7a6028a8c2176f8ef0350a6fea9cd1/description/gunnar.urdf.xacro -->
+	<xacro:macro name="test_skid_steer_addin" params="name">
+		<plugin name="${name}" filename="libgazebo_ros_diff_drive.so">
+			<alwaysOn>true</alwaysOn>
+			<updateRate>20</updateRate>
+			<rosDebugLevel>info</rosDebugLevel>
+			<publishWheelTF>true</publishWheelTF>
+			<publishTf>true</publishTf>
+			<publishWheelJointState>true</publishWheelJointState>
+			<legacyMode>true</legacyMode>
+			<commandTopic>cmd_vel</commandTopic>
+
+			<leftJoint>left_wheel_continuous_joint</leftJoint>
+			<rightJoint>right_wheel_continuous_joint</rightJoint>
+			<wheelSeparation>${CHASSISWIDTH+WHEELLENGTH}</wheelSeparation>
+			<wheelDiameter>${2*WHEELRADIUS}</wheelDiameter>
+			<wheelTorque>${WHEELTORQUE}</wheelTorque>
+			<wheelAcceleration>${WHEELACCEL}</wheelAcceleration>
+
+			<odometryTopic>odom</odometryTopic>
+			<odometryFrame>odom</odometryFrame>
+			<odometrySource>world</odometrySource>
+
+			<robotBaseFrame>base_footprint</robotBaseFrame>
+		</plugin>
+	</xacro:macro>
+	
+	<xacro:macro name="plot" params="plot_id plot_range_index plot_crossrange_index x y z rotation row_count row_width row_length average_height average_density">
+        <plot_id>${plot_id}</plot_id>
+        <plot_range_index>${plot_range_index}</plot_range_index>
+        <plot_crossrange_index>${plot_crossrange_index}</plot_crossrange_index>
+        <x>${x}</x>
+        <y>${y}</y>
+        <z>${z}</z>
+		<rotation>${rotation}</rotation>
+        <row_count>${row_count}</row_count>
+        <row_width>${row_width}</row_width>
+        <row_length>${row_length}</row_length>
+        <average_height>${average_height}</average_height>
+        <average_density>${plot_id}</average_density>
+ 	</xacro:macro>
+
+
+</robot>
