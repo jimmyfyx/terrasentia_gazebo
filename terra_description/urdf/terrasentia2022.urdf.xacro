@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot name="terrasentia" xmlns:xacro="http://ros.org/wiki/xacro">
+  	<xacro:arg name="robot_ns" default=""/>
+	
+	<!-- ====================================================
+		               Base Includes
+	========================================================= -->
+	<xacro:include filename="$(find terra_description)/config/general_config.urdf.xacro"/>
+	<xacro:include filename="$(find terra_description)/config/sensors_config.urdf.xacro"/>
+	<xacro:include filename="$(find terra_description)/urdf/links.urdf.xacro"/>
+	
+	<!-- ====================================================
+		               Components
+	========================================================= -->
+	<xacro:base_footprint parent="base_footprint" child="base_link"/>
+	<xacro:chassis name="base_link" stl_chassis="${STL_CHASSIS}" color="white"/>
+<!-- 
+	<xacro:leg parent="base_link" prefix="front" suffix="left" reflect="-1" color="grey" verbose="true"
+		stl="${STL_LEG}" damping="${SPRING_DAMPING}" stiffness="${SPRING_STIFFNESS}"
+		min="0.0872665" max="0.523599" spring_reference="0.261799" > -->
+	<xacro:leg parent="base_link" prefix="front" suffix="left" reflect="-1" color="grey" verbose="true"
+		stl="${STL_LEG}" 
+		min="0.52" max="0.52"  >
+		
+		<origin_inertial xyz="-0.01384 -0.12814 0.04825" rpy="0 0 0" />
+	</xacro:leg>
+
+	<!-- <xacro:leg parent="base_link" prefix="front" suffix="right" reflect="1" color="grey" verbose="true"
+		stl="${STL_LEG}" damping="${SPRING_DAMPING}" stiffness="${SPRING_STIFFNESS}"
+		min="0.0872665" max="0.523599" spring_reference="0.261799" > -->
+	<xacro:leg parent="base_link" prefix="front" suffix="right" reflect="1" color="grey" verbose="true"
+		stl="${STL_LEG}" 
+		min="0.52" max="0.52" >
+		<origin_inertial xyz="-0.01791 -0.01418 0.04825" rpy="0 0 0" />
+	</xacro:leg>
+<!-- 
+	<xacro:leg parent="base_link" prefix="rear" suffix="right" reflect="-1" color="grey" verbose="true"
+		stl="${STL_LEG}" damping="${SPRING_DAMPING}" stiffness="${SPRING_STIFFNESS}"
+		min="-0.523599" max="-0.0872665" spring_reference="-0.261799" > -->
+	<xacro:leg parent="base_link" prefix="rear" suffix="right" reflect="-1" color="grey" verbose="true"
+		stl="${STL_LEG}"
+		min="-0.52" max="-0.52" >
+		<origin_inertial xyz="0 0.0711 0.09735" rpy="0 0 0" />
+	</xacro:leg>
+
+	<!-- <xacro:leg parent="base_link" prefix="rear" suffix="left" reflect="1" color="grey" verbose="true"
+		stl="${STL_LEG}" damping="${SPRING_DAMPING}" stiffness="${SPRING_STIFFNESS}"
+		min="-0.523599" max="-0.0872665" spring_reference="-0.261799" > -->
+	<xacro:leg parent="base_link" prefix="rear" suffix="left" reflect="1" color="grey" verbose="true"
+		stl="${STL_LEG}" 
+		min="-0.52" max="-0.52"  >
+		<origin_inertial xyz="-0.00066 -0.04553 0.09735" rpy="0 0 0" />
+	</xacro:leg>
+
+	<xacro:wheel parent="base_link" prefix="front" suffix="right" stl="${STL_WHEEL}" stl_collision="${STL_WHEEL_CONVEX}" reflect="1" friction="${WHEEL_FRICTION}" color="black" />
+	<xacro:wheel parent="base_link" prefix="rear" suffix="right" stl="${STL_WHEEL}" stl_collision="${STL_WHEEL_CONVEX}" reflect="-1" friction="${WHEEL_FRICTION}" color="black" />
+	<xacro:wheel parent="base_link" prefix="front" suffix="left" stl="${STL_WHEEL}" stl_collision="${STL_WHEEL_CONVEX}" reflect="1" friction="${WHEEL_FRICTION}" color="black" />
+	<xacro:wheel parent="base_link" prefix="rear" suffix="left" stl="${STL_WHEEL}" stl_collision="${STL_WHEEL_CONVEX}" reflect="-1" friction="${WHEEL_FRICTION}" color="black" />
+
+     <!-- ====================================================
+                           Controllers
+     ========================================================= -->
+     <gazebo>
+		<plugin name="skid_steer_drive_controller" filename="libterra_ros_skid_steer.so">
+			<updateRate>50.0</updateRate>
+			<robotNamespace>$(arg robot_ns)</robotNamespace>
+			<leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
+			<rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
+			<leftRearJoint>rear_left_wheel_joint</leftRearJoint>
+			<rightRearJoint>rear_right_wheel_joint</rightRearJoint>
+			<wheelSeparation>0.4318</wheelSeparation>
+			<wheelDiameter>0.194</wheelDiameter>
+			<pulsesPR>9510</pulsesPR>
+			<robotBaseFrame>base_footprint</robotBaseFrame>
+			<torque>6.0</torque>
+			<topicName>cmd_vel</topicName>
+			<broadcastTF>true</broadcastTF>
+			<commandTopic>cmd_vel</commandTopic>
+			<odometryTopic>ground_truth</odometryTopic>
+			<odometryFrame>map</odometryFrame>
+			<covariance_x>0.0001</covariance_x>
+			<covariance_y>0.0001</covariance_y>
+			<covariance_yaw>0.01</covariance_yaw>
+		</plugin>
+     </gazebo>
+
+	<!-- Ground truth-->
+	<!-- <gazebo>
+		<plugin name="ground_truth" filename="libgazebo_ros_p3d.so">
+			<robotNamespace>$(arg robot_ns)</robotNamespace>
+			<frameName>map</frameName>
+			<bodyName>base_link</bodyName>
+			<topicName>ground_truth</topicName>
+			<updateRate>100.0</updateRate>
+		</plugin>
+	</gazebo> -->
+</robot>

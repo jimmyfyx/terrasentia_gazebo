@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <!-- ====================================================
+                         STL Filepaths
+     ========================================================= -->
+     <xacro:property name="STL_CHASSIS"	     value="package://terra_description/models/TS2020_body.STL"/>
+     <xacro:property name="STL_LEG" 	     value="package://terra_description/models/strut_link.STL"/>
+     <xacro:property name="STL_WHEEL"  	     value="package://terra_description/models/wheel_link.stl"/>
+     <xacro:property name="STL_WHEEL_CONVEX" value="package://terra_description/models/wheel_link_convex.stl"/>
+     <!-- ====================================================
+                         Geometrical Constants
+     ========================================================= -->
+     <xacro:property name="WHEEL_RADIUS" value="0.097"/>
+     <xacro:property name="WHEEL_DEPTH" value="0.03838"/>
+     <xacro:property name="CHASSIS_SIZE" value="0.3532 0.508 0.1282(0.1521)"/>
+     <xacro:property name="CHASSIS_OFFSET" value="0.04545"/>
+     <xacro:property name="FOOTPRINT_OFFSET" value="0.175"/>
+
+     <!-- ====================================================
+                         Suspension Properties
+     ========================================================= -->
+     <xacro:property name="SPRING_STIFFNESS" value="3.0"/>
+     <xacro:property name="SPRING_DAMPING" value="1.0"/>
+
+     <!-- ====================================================
+                         Wheel Properties
+     ========================================================= -->
+     <xacro:property name="WHEEL_FRICTION" value="0.75"/>
+
+     <!-- ====================================================
+                           Constants
+     ========================================================= -->
+     <xacro:property name="M_PI" value="3.1415926535897931" />
+
+</robot>

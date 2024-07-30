@@ -1,0 +1,11 @@
+std_msgs/Header header
+float64 latitude
+float64 longitude
+float32 altitude
+float32 heading
+float32 heading_accuracy
+float32 horizontal_accuracy
+float32 speed_east
+float32 speed_north
+float32 speed_accuracy
+float32 read_timestamp

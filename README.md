@@ -1,7 +1,6 @@
 # terrasentia_gazebo
 
 ## Files not included from actual workspace
-- Folder `/terra_description`
 - All plants and terrain models in `/terra_worlds/models`
 - Perception model checkpoint in `/terra_utils/scripts/models`
 
