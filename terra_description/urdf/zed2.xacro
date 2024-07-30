@@ -101,53 +101,6 @@
 		<!-- Left/Depth camera -->
 		<gazebo reference="${link_prefix}zed2_left_camera_frame">
 			<!-- Raw images (with lens distortion) -->
-			<sensor type="camera" name="zed2_left_raw_camera">
-				<always_on>true</always_on>
-				<update_rate>15.0</update_rate>
-				<visualize>false</visualize> 
-				<camera name="zed2_left_raw">
-					<horizontal_fov>1.76013456</horizontal_fov>
-					<image>
-						<width>1280</width>
-						<height>720</height>
-						<format>R8G8B8</format>
-					</image>
-					<clip>
-						<near>0.02</near>
-						<far>300</far>
-					</clip>
-					<noise>
-						<type>gaussian</type>
-						<mean>0.0</mean>
-						<stddev>0.007</stddev>
-					</noise>
-					<distortion>
-						<!-- Values copied from an actual ZED2 camera -->
-						<k1>-0.0403</k1>
-						<k2>0.0080</k2>
-						<p1>-0.0006</p1>
-						<p2>0.0001</p2>
-						<k3>-0.0042</k3>
-						<center>0.5 0.5</center>
-					</distortion>
-				</camera>
-				<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-					<robotNamespace>${robot_ns}</robotNamespace>
-					<cameraName>zed2/left_raw</cameraName>
-					<imageTopicName>image_raw_color</imageTopicName>
-					<cameraInfoTopicName>camera_info</cameraInfoTopicName>
-					<frameName>zed2_left_camera_optical_frame</frameName>
-					<distortionK1>-0.0403</distortionK1>
-					<distortionK2>0.0080</distortionK2>
-					<distortionT1>-0.0006</distortionT1>
-					<distortionT2>0.0001</distortionT2>
-					<distortionK3>-0.0042</distortionK3>
-					<CxPrime>631.05</CxPrime>
-					<Cx>631.05</Cx>
-					<Cy>348.0125</Cy>
-					<hackBaseline>0.0</hackBaseline>
-				</plugin>
-			</sensor>
 
 			<sensor type="depth" name="zed2_left_camera">
 				<!-- Rectified images, Depth images, Point Clouds -->
@@ -194,52 +147,6 @@
 		<!-- Right camera -->
 		<gazebo reference="${link_prefix}zed2_right_camera_frame">
 			<!-- Raw images (with lens distortion) -->
-			<sensor type="camera" name="zed2_right_raw_camera">
-				<always_on>true</always_on>
-				<update_rate>15.0</update_rate>
-				<visualize>false</visualize> 
-				<camera name="zed2_right_raw">
-				<horizontal_fov>1.76064523</horizontal_fov>
-				<image>
-					<width>1280</width>
-					<height>720</height>
-					<format>R8G8B8</format>
-				</image>
-				<clip>
-					<near>0.02</near>
-					<far>300</far>
-				</clip>
-				<noise>
-					<type>gaussian</type>
-					<mean>0.0</mean>
-					<stddev>0.007</stddev>
-				</noise>
-				<distortion>
-					<k1>-0.0422</k1>
-					<k2>0.0106</k2>
-					<p1>-0.0001</p1>
-					<p2>0.0001</p2>
-					<k3>-0.0051</k3>
-					<center>0.5 0.5</center>
-				</distortion>
-				</camera>
-				<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-				<robotNamespace>${robot_ns}</robotNamespace>
-				<cameraName>zed2/right_raw</cameraName>
-				<imageTopicName>image_raw_color</imageTopicName>
-				<cameraInfoTopicName>camera_info</cameraInfoTopicName>
-				<frameName>zed2_right_camera_optical_frame</frameName>
-				<distortionK1>-0.0422</distortionK1>
-				<distortionK2>0.0106</distortionK2>
-				<distortionT1>-0.0001</distortionT1>
-				<distortionT2>0.0001</distortionT2>
-				<distortionK3>-0.0051</distortionK3>
-				<CxPrime>659.3049926757812</CxPrime>
-				<Cx>636.8400</Cx>
-				<Cy>344.7845</Cy>
-				<hackBaseline>0.1198950</hackBaseline>
-				</plugin>
-			</sensor>
 
 			<sensor type="camera" name="zed2_right_camera">
 				<!-- Rectified images -->
