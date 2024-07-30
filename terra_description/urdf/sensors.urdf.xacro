@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="all_sensors" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- This file unifies all sensors that can be used on simulation, defined as xacro:macros -->
+
+	<!-- Camera uEye CP Gige -->
+	<xacro:include filename="$(find terra_description)/urdf/ueye_cp_gige.urdf.xacro" />
+
+	<!-- LiDAR Hokuyo ust10lx -->
+	<xacro:include filename="$(find terra_description)/urdf/hokuyo_ust10lx.urdf.xacro" />
+
+	<!-- Imu Terra -->
+	<xacro:include filename="$(find terra_description)/urdf/imu_terra_plugin.urdf.xacro" />
+
+	<!-- GPS -->
+	<xacro:include filename="$(find terra_description)/urdf/gps-with-periodicnoisebox.urdf.xacro" />
+</robot>

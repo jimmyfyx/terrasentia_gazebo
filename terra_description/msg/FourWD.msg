@@ -1,0 +1,6 @@
+std_msgs/Header header
+terra_description/Motor front_left
+terra_description/Motor front_right
+terra_description/Motor back_left
+terra_description/Motor back_right
+float32 read_timestamp

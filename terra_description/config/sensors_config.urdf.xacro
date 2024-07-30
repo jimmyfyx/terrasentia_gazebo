@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+	<xacro:arg name="robot_ns" default=""/>
+
+	<!-- ====================================================
+		Include Sensor Database for Available Sensors
+	========================================================= -->
+	<xacro:include filename="$(find terra_description)/urdf/sensors.urdf.xacro" />
+	<xacro:include filename="$(find terra_description)/urdf/zed2.xacro" />
+	<!-- <xacro:include filename="$(find terra_description)/urdf/depth_cam.xacro" /> -->
+
+	<!-- ====================================================
+				Attach and Configure Sensors
+	========================================================= -->
+
+	<!-- LiDAR -->
+	<xacro:sensor_hokuyo_ust10lx name="hokuyo" parent="base_footprint" color="black">
+		<origin xyz="0.15 0 0.24" rpy="0 0 0"/>
+	</xacro:sensor_hokuyo_ust10lx>
+
+	<!-- Front Camera -->
+	<!-- <xacro:sensor_ueye_cp_gige name="front_cam_node" robot_ns="$(arg robot_ns)" parent="base_footprint" color="purple">
+		<origin xyz="0.23222 0 0.14" rpy="0 0 0"/>
+	</xacro:sensor_ueye_cp_gige> -->
+
+	<!-- <xacro:sensor_ueye_cp_gige name="front_left_cam_node" robot_ns="$(arg robot_ns)" parent="base_footprint" color="purple">
+		<origin xyz="0.23222 0.14 0.14" rpy="0 0 0"/>
+	</xacro:sensor_ueye_cp_gige>
+
+	<xacro:sensor_ueye_cp_gige name="front_right_cam_node" robot_ns="$(arg robot_ns)" parent="base_footprint" color="purple">
+		<origin xyz="0.23222 -0.14 0.14" rpy="0 0 0"/>
+	</xacro:sensor_ueye_cp_gige> -->
+	<!--Left Side Camera -->
+	<!--
+	<xacro:sensor_ueye_cp_gige name="camera_left" parent="base_footprint" color="purple">
+		<origin xyz="0 0.11 0.14" rpy="0 0 1.5708"/>
+	</xacro:sensor_ueye_cp_gige>
+	-->
+	<!-- Right Side Camera -->
+	<!--
+	<xacro:sensor_ueye_cp_gige name="camera_right" parent="base_footprint" color="purple">
+		<origin xyz="0 -0.11 0.14" rpy="0 0 -1.5708"/>
+	</xacro:sensor_ueye_cp_gige>
+	-->
+
+	<!-- ZED2 Camera --> 
+	<!-- To use the following 3 cameras, use the depth_cam.xacro file instead of zed2.xacro -->
+	<!-- <joint name="$center_zed2_camera_center_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="center_zed2_camera_center"/>
+		<origin xyz="0.156 0 0.283" rpy="0 0 0"/>
+    </joint>
+	<xacro:zed2 link_prefix="center" joint_prefix="center"/>
+	<xacro:zed2_gazebo link_prefix="center" joint_prefix="center" robot_ns="$(arg robot_ns)"/>
+
+	<joint name="$left_zed2_camera_center_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="left_zed2_camera_center"/>
+		<origin xyz="0.156 0.11 0.283" rpy="0 0 1.5708"/>
+    </joint>
+	<xacro:zed2 link_prefix="left" joint_prefix="left"/>
+	<xacro:zed2_gazebo link_prefix="left" joint_prefix="left" robot_ns="$(arg robot_ns)"/>
+
+	<joint name="$right_zed2_camera_center_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="right_zed2_camera_center"/>
+		<origin xyz="0.156 -0.11 0.283" rpy="0 0 -1.5708"/>
+    </joint>
+	<xacro:zed2 link_prefix="right" joint_prefix="right"/>
+	<xacro:zed2_gazebo link_prefix="right" joint_prefix="right" robot_ns="$(arg robot_ns)"/> -->
+
+	<!-- ZED2 Camera -->
+	<joint name="$zed2_camera_center_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="zed2_camera_center"/>
+		<origin xyz="0.156 0 0.283" rpy="0 0 0"/>
+    </joint>
+	<xacro:zed2 link_prefix="" joint_prefix=""/>
+	<xacro:zed2_gazebo robot_ns="$(arg robot_ns)"/>
+	
+
+	<!-- IMU -->
+	<xacro:sensor_imu_terra name="imu" parent="base_footprint" color="red"
+		update_rate="100.0"
+		noise="0.005"
+		yaw_offset="2.0944"
+		yaw_drift="0.02"
+		yaw_noise="0.01"
+		rate_offset="0.0 0.0 0.0"
+		rate_drift="0.002 0.002 0.002"
+		rate_noise="0.001 0.001 0.001"
+		accel_offset="0.0 0.0 0.0"
+		accel_drift="0.005 0.005 0.005"
+		accel_noise="0.005 0.005 0.005">
+		<origin xyz="0 0 0.1" rpy="0 0 0"/>
+	</xacro:sensor_imu_terra>
+
+	<!-- GPS w/ Variable Dropouts-->
+	<xacro:sensor_gps_with_dropout name="gps" parent="base_footprint" color="white"
+		ref_lat="40.072209"
+		ref_long="-88.209822"
+		ref_head="90.0"
+		update_rate="5.0"
+		drift="0.0"
+		noise="0.05"
+		vel_drift="0.00001"
+		vel_noise="0.00001">
+		<origin xyz="-0.19 0 0.25" rpy="0 0 0"/>
+	</xacro:sensor_gps_with_dropout>
+</robot>

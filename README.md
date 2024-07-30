@@ -1,7 +1,6 @@
 # terrasentia_gazebo
 
 ## Files not included from actual workspace
-- Folder `/terra_description`
 - All plants and terrain models in `/terra_worlds/models`
 - Perception model checkpoint in `/terra_utils/scripts/models`
 
@@ -24,8 +23,8 @@ In order to change the environment, change line 48 in `/terra_worlds/worlds/farm
 
 ## Notes on rostopics that can be used to formulate the reward function
 
-Use the following rostopic as input to the RL policy
-`/terrasentia/vision/keypoint_heatmap`
+Use the following rostopics as input to the RL policy
+`/terrasentia/vision/left/keypoint_heatmap` and '`/terrasentia/vision/right/keypoint_heatmap`
 
 The following rostopics can be used to define the dense reward function
 

@@ -13,6 +13,7 @@ from scipy.special import softmax
 import argparse 
 import sys
 import os
+import message_filters
 
 
 
@@ -102,22 +103,29 @@ class Perception:
         self.subscribers()
 
     def subscribers(self):        
-        front_img_topic = '/terrasentia/center_zed2/rgb/image_rect_color/compressed'
-        self.front_cam_sub = rospy.Subscriber(front_img_topic,CompressedImage, self.singlecam_callback, queue_size = 1)  
+        left_img_topic = '/terrasentia/zed2/left/image_rect_color/compressed'
+        right_img_topic = '/terrasentia/zed2/right/image_rect_color/compressed'
+        left_cam_sub = message_filters.Subscriber(left_img_topic, CompressedImage)
+        right_cam_sub = message_filters.Subscriber(right_img_topic, CompressedImage)
+
+        # Create a time synchronizer
+        ts = message_filters.ApproximateTimeSynchronizer([left_cam_sub, right_cam_sub], queue_size=1, slop=0.5)
+
+        # Register the callback to the synchronizer
+        ts.registerCallback(self.stereocam_callback)
 
     def publishers(self):
-        # Output image topics
-        keypoint_heatmap_topic = '/terrasentia/vision/keypoint_heatmap'
-        self.keypoint_heatmap_pub = rospy.Publisher(keypoint_heatmap_topic,Float32MultiArray, queue_size=1)
+        # Output image topics for left camera
+        self.keypoint_heatmap_pub_left = rospy.Publisher('/terrasentia/vision/left/keypoint_heatmap', Float32MultiArray, queue_size=1)
+        self.keypoint_heatmap_norm_pub_left = rospy.Publisher('/terrasentia/vision/left/keypoint_heatmap_normalized/compressed', CompressedImage, queue_size=1)
+        self.keypoint_vis_heatmap_pub_left = rospy.Publisher('/terrasentia/vision/left/keypoint_vis_heatmap/compressed', CompressedImage, queue_size=1)
+        self.keypoint_vis_argmax_pub_left = rospy.Publisher('/terrasentia/vision/left/keypoint_vis_argmax/compressed', CompressedImage, queue_size=1)
 
-        keypoint_heatmap_norm_topic = '/terrasentia/vision/keypoint_heatmap_normalized/compressed'
-        self.keypoint_heatmap_norm_pub = rospy.Publisher(keypoint_heatmap_norm_topic,CompressedImage, queue_size=1)
-      
-        keypoint_vis_heatmap_topic = '/terrasentia/vision/keypoint_vis_heatmap/compressed'
-        self.keypoint_vis_heatmap_pub = rospy.Publisher(keypoint_vis_heatmap_topic,CompressedImage, queue_size=1)
-
-        keypoint_vis_argmax_topic = '/terrasentia/vision/keypoint_vis_argmax/compressed'
-        self.keypoint_vis_argmax_pub = rospy.Publisher(keypoint_vis_argmax_topic,CompressedImage, queue_size=1)
+        # Output image topics for right camera
+        self.keypoint_heatmap_pub_right = rospy.Publisher('/terrasentia/vision/right/keypoint_heatmap', Float32MultiArray, queue_size=1)
+        self.keypoint_heatmap_norm_pub_right = rospy.Publisher('/terrasentia/vision/right/keypoint_heatmap_normalized/compressed', CompressedImage, queue_size=1)
+        self.keypoint_vis_heatmap_pub_right = rospy.Publisher('/terrasentia/vision/right/keypoint_vis_heatmap/compressed', CompressedImage, queue_size=1)
+        self.keypoint_vis_argmax_pub_right = rospy.Publisher('/terrasentia/vision/right/keypoint_vis_argmax/compressed', CompressedImage, queue_size=1)
 
 
     def Image_processing(self,ros_data):
@@ -126,7 +134,8 @@ class Perception:
         image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) 
        
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = image[8:232]
+        image = image[24:696,160:1120]  
+        image = cv2.resize(image,[320,224])
 
         data = image/255
         data[:,:,0] = (data[:,:,0]-0.485)/0.229
@@ -138,12 +147,30 @@ class Perception:
         return data,image
     
 
-    def singlecam_callback(self,data):
+    def stereocam_callback(self, left_data, right_data):
 
-        tensor,image = self.Image_processing(data)
+        left_tensor, left_image = self.Image_processing(left_data)
+        right_tensor, right_image = self.Image_processing(right_data)
+        combined_tensor = np.concatenate((left_tensor, right_tensor))
 
-        pred = self.model(torch.from_numpy(tensor).to(self.device)).detach().cpu().numpy()[0]
+        pred = self.model(torch.from_numpy(combined_tensor).to(self.device)).detach().cpu().numpy()
+        pred_left = pred[0]
+        pred_right = pred[1]
+        
+        keypoint_heatmap_msg_left,keypoint_heatmap_norm_msg_left,keypoint_vis_heatmap_msg_left,keypoint_vis_argmax_msg_left = self.process_output(pred_left,left_image)
+        keypoint_heatmap_msg_right,keypoint_heatmap_norm_msg_right,keypoint_vis_heatmap_msg_right,keypoint_vis_argmax_msg_right = self.process_output(pred_right,right_image)
 
+        self.keypoint_heatmap_pub_left.publish(keypoint_heatmap_msg_left)
+        self.keypoint_vis_heatmap_pub_left.publish(keypoint_vis_heatmap_msg_left)
+        self.keypoint_vis_argmax_pub_left.publish(keypoint_vis_argmax_msg_left)
+        self.keypoint_heatmap_norm_pub_left.publish(keypoint_heatmap_norm_msg_left)
+
+        self.keypoint_heatmap_pub_right.publish(keypoint_heatmap_msg_right)
+        self.keypoint_vis_heatmap_pub_right.publish(keypoint_vis_heatmap_msg_right)
+        self.keypoint_vis_argmax_pub_right.publish(keypoint_vis_argmax_msg_right)
+        self.keypoint_heatmap_norm_pub_right.publish(keypoint_heatmap_norm_msg_right)
+
+    def process_output(self,pred,image):
         keypoint_heatmap_msg = Float32MultiArray()
 
         channels, height, width = pred.shape
@@ -172,7 +199,6 @@ class Perception:
 
         # Assign the image data to the message
         keypoint_heatmap_msg.data = pred.flatten().tolist()
-        self.keypoint_heatmap_pub.publish(keypoint_heatmap_msg)
 
         pred[0] = softmax(pred[0])
         pred[1] = softmax(pred[1])
@@ -184,21 +210,16 @@ class Perception:
         keypoint_heatmap_norm_msg.header.stamp = rospy.Time.now()
         keypoint_heatmap_norm_msg.format = "jpeg"
         keypoint_heatmap_norm_msg.data = np.array(cv2.imencode('.jpg', cv2.resize(self.normalize(pred),image.shape[:2][::-1])*255)[1]).tobytes()
-        self.keypoint_heatmap_norm_pub.publish(keypoint_heatmap_norm_msg)
-
-
+        
         keypoint_vis_heatmap_msg = CompressedImage()
         keypoint_vis_heatmap_msg.header.stamp = rospy.Time.now()
         keypoint_vis_heatmap_msg.format = "jpeg"
         keypoint_vis_heatmap_msg.data = np.array(cv2.imencode('.jpg', pred_vis)[1]).tobytes()
 
-        
-        self.keypoint_vis_heatmap_pub.publish(keypoint_vis_heatmap_msg)
-
+    
         vp_y,vp_x = np.unravel_index(pred[0].argmax(), pred[0].shape)
         ll_y,ll_x = np.unravel_index(pred[1].argmax(), pred[1].shape)
         lr_y, lr_x = np.unravel_index(pred[2].argmax(), pred[2].shape)
-
 
         argmax_img = cv2.circle(image, (vp_x*self.heatmaps_scale,vp_y*self.heatmaps_scale), 5, (255,0,0), -1)
         argmax_img = cv2.line(argmax_img,(vp_x*self.heatmaps_scale,vp_y*self.heatmaps_scale),(ll_x*self.heatmaps_scale,ll_y*self.heatmaps_scale),(0,255,0),2)
@@ -210,10 +231,10 @@ class Perception:
         keypoint_vis_argmax_msg.format = "jpeg"
         keypoint_vis_argmax_msg.data = np.array(cv2.imencode('.jpg', argmax_img)[1]).tobytes()
 
-        self.keypoint_vis_argmax_pub.publish(keypoint_vis_argmax_msg)
-      
-       
+        return keypoint_heatmap_msg,keypoint_heatmap_norm_msg,keypoint_vis_heatmap_msg,keypoint_vis_argmax_msg
 
+      
+    
     def normalize(self,input):
         #input is c,h,w which we change to w,h,c
         input = input.transpose((1,2,0))
